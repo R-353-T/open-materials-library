@@ -1,0 +1,81 @@
+# Global
+
+path: ./build/
+url: http://localhost:8080/
+user: root
+color: false
+locale: en_US
+
+# Core
+
+core download:
+  force: true
+
+core install:
+  title: OML
+  admin_user: root
+  admin_password: toor
+  admin_email: fake@example.com
+  skip_email: true
+
+# Plugin
+
+plugin install:
+  force: true
+  activate: true
+
+# Config
+
+config create:
+  force: true
+  dbname: oml
+  dbhost: localhost
+  dbuser: superman
+  dbpass: toor
+  dbprefix: oml_
+  dbcharset: utf8mb4
+  extra-php: |
+    // WORDPRESS
+    define("WP_DEBUG", true);
+    define("WP_DEBUG_LOG", true);
+    define("WP_DEBUG_DISPLAY", true);
+    define("WP_ENVIRONMENT_TYPE", "development");
+
+    // JWT AUTHENTICATION PLUGIN
+    define("JWT_AUTH_SECRET_KEY", "your-top-secret-key");
+    define("JWT_AUTH_CORS_ENABLE", true);
+
+disabled_commands:
+  - db drop
+################################################################################
+################################################################################
+#
+#
+#
+# Aliases to other WordPress installs (e.g. `wp @staging rewrite flush`)
+# An alias can include 'user', 'url', 'path', 'ssh', or 'http'
+# @staging:
+#     ssh: wpcli@staging.wp-cli.org
+#     user: wpcli
+#     path: /srv/www/staging.wp-cli.org
+# @production:
+#     ssh: wpcli@wp-cli.org:2222
+#     user: wpcli
+#     path: /srv/www/wp-cli.org
+
+# Aliases can reference other aliases to create alias groups
+# Alias groups can be nested
+# @both:
+#  - @staging
+#  - @production
+
+# '_' is a special value denoting configuration options for this wp-cli.yml
+# _:
+#     # Merge subcommand defaults from the upstream config.yml, instead of overriding
+#     merge: true
+#     # Inherit configuration from an arbitrary YAML file
+#     inherit: prod.yml
+#
+#
+################################################################################
+################################################################################

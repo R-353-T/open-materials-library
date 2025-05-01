@@ -1,0 +1,17 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "R-353-T",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "backend:dev": "node ./script/command/backend-dev.js",
+    "backend:install": "node ./script/command/backend-install.js",
+    "backend:serve": "node ./script/command/backend-serve.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "yaml": "^2.7.1"
+  }
+}
