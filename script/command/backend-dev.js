@@ -35,30 +35,37 @@ while (true) {
     }
 
     for (const createdElement of createdElements) {
-        if (lintFlag === PHP_LINT_STATUS.NOT) {
-            lintFlag = await phpLint(createdElement.rel);
-        }
+        if(createdElement.stats.isDirectory()) {
+            fs.mkdirSync(join(DIRECTORY.BACKEND_DESTINATION, createdElement.rel), { recursive: true });
+        } else {
+            if (lintFlag === PHP_LINT_STATUS.NOT) {
+                lintFlag = await phpLint(createdElement.rel);
+            }
 
-        if (lintFlag === PHP_LINT_STATUS.NOT || lintFlag === PHP_LINT_STATUS.OK) {
-            elementPath = join(DIRECTORY.BACKEND_DESTINATION, createdElement.rel);
-            fs.copyFileSync(createdElement.abs, elementPath);
-            elementStats = fs.statSync(createdElement.abs);
-            fs.utimesSync(elementPath, elementStats.mtime, elementStats.mtime);
-            console.log(`+ ${createdElement.rel}`);
+            if (lintFlag === PHP_LINT_STATUS.NOT || lintFlag === PHP_LINT_STATUS.OK) {
+                elementPath = join(DIRECTORY.BACKEND_DESTINATION, createdElement.rel);
+                fs.copyFileSync(createdElement.abs, elementPath);
+                elementStats = fs.statSync(createdElement.abs);
+                fs.utimesSync(elementPath, elementStats.mtime, elementStats.mtime);
+            }
         }
+        
+        console.log(`+ ${createdElement.rel}`);
     }
 
     for (const updatedElement of updatedElements) {
-        if (lintFlag === PHP_LINT_STATUS.NOT) {
-            lintFlag = await phpLint(updatedElement.rel);
-        }
-
-        if (lintFlag === PHP_LINT_STATUS.NOT || lintFlag === PHP_LINT_STATUS.OK) {
-            elementPath = join(DIRECTORY.BACKEND_DESTINATION, updatedElement.rel);
-            fs.copyFileSync(updatedElement.abs, elementPath);
-            elementStats = fs.statSync(updatedElement.abs);
-            fs.utimesSync(elementPath, elementStats.mtime, elementStats.mtime);
-            console.log(`~ ${updatedElement.rel}`);
+        if(updatedElement.stats.isFile()) {
+            if (lintFlag === PHP_LINT_STATUS.NOT) {
+                lintFlag = await phpLint(updatedElement.rel);
+            }
+    
+            if (lintFlag === PHP_LINT_STATUS.NOT || lintFlag === PHP_LINT_STATUS.OK) {
+                elementPath = join(DIRECTORY.BACKEND_DESTINATION, updatedElement.rel);
+                fs.copyFileSync(updatedElement.abs, elementPath);
+                elementStats = fs.statSync(updatedElement.abs);
+                fs.utimesSync(elementPath, elementStats.mtime, elementStats.mtime);
+                console.log(`~ ${updatedElement.rel}`);
+            }
         }
     }
 
