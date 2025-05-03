@@ -6,6 +6,13 @@ trait Singleton
 {
     private static $INSTANCES = array();
 
+    /**
+     * Returns the singleton instance
+     *
+     * @param array|null $arguments The instance arguments
+     *
+     * @return static|null
+     */
     public static function inject(?array $arguments = null): self|null
     {
         $class = get_called_class();

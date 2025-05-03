@@ -16,6 +16,12 @@ abstract class Validator extends Service
         $this->err = new BadRequestError();
     }
 
+    /**
+     * Validate that the given ID is valid
+     *
+     * @param mixed $id The ID to validate
+     * @param string $name The name of the parameter to use in the error message
+     */
     public function validateId(mixed $id, string $name = 'id'): void
     {
         if ($id === null) {

@@ -21,16 +21,38 @@ abstract class Repository extends Service
         $this->cache = new HashMap();
     }
 
+    /**
+     * Insert a model into the database table
+     *
+     * @param mixed $model The model to be inserted
+     *
+     * @return object|null The inserted model if successful, null otherwise
+     */
     public function insert(mixed $model): ?object
     {
         return null;
     }
 
+    /**
+     * Update a model in the database table
+     *
+     * @param mixed $model The model to be updated
+     *
+     * @return object|null The updated model if successful, null otherwise
+     */
     public function update(mixed $model): ?object
     {
         return null;
     }
 
+    /**
+     * Select a model from the database table by its ID
+     *
+     * @param int $id The ID of the model to be selected
+     * @param bool $cache Whether to use the cache or not
+     *
+     * @return object|null The selected model if successful, null otherwise
+     */
     public function selectById(int $id, bool $cache = true): false|object
     {
         $model = null;
@@ -49,6 +71,13 @@ abstract class Repository extends Service
         return $model;
     }
 
+    /**
+     * Delete a model from the database table by its ID
+     *
+     * @param int $id The ID of the model to be deleted
+     *
+     * @return bool Whether the deletion was successful or not
+     */
     public function deleteById(int $id): bool
     {
         $statement = Database::$PDO->prepare(SqlQueries::deleteById($this->table));
@@ -63,6 +92,13 @@ abstract class Repository extends Service
         return $deleted;
     }
 
+    /**
+     * Select all models from the database table using the given select options
+     *
+     * @param SqlSelectOptions $options The select options to use for the query
+     *
+     * @return array The array of selected models
+     */
     public function selectAll(SqlSelectOptions $options = new SqlSelectOptions()): array
     {
         $statement = Database::$PDO->prepare(SqlQueries::selectAll($this->table, $options));
@@ -71,6 +107,13 @@ abstract class Repository extends Service
         return $statement->fetchAll(PDO::FETCH_CLASS, $this->model);
     }
 
+    /**
+     * Count of all models from the database table using the given select options
+     *
+     * @param SqlSelectOptions $options The select options to use for the query
+     *
+     * @return int The count of all selected models
+     */
     public function countAll(SqlSelectOptions $options = new SqlSelectOptions()): int
     {
         $statement = Database::$PDO->prepare(SqlQueries::countAll($this->table, $options));
@@ -79,6 +122,13 @@ abstract class Repository extends Service
         return $statement->fetchColumn();
     }
 
+    /**
+     * Get the final page from the database table using the given select options
+     *
+     * @param SqlSelectOptions $options The select options to use for the query
+     *
+     * @return int The final page of all selected models
+     */
     public function finalPage(SqlSelectOptions $options = new SqlSelectOptions()): int
     {
         $count = $this->countAll($options);
