@@ -24,7 +24,7 @@ abstract class Middleware extends Service
         WP_REST_Server $server,
         WP_REST_Request $request
     ) {
-        if (oml_wp_original_request($request)) {
+        if (oml_wp_original_request($request) === false) {
             foreach (self::$middlewareList as $middleware) {
                 $instance = call_user_func(array($middleware, "inject"));
                 $response = $instance->request($response, $server, $request);
@@ -48,7 +48,7 @@ abstract class Middleware extends Service
         WP_REST_Server $server,
         WP_REST_Request $request
     ) {
-        if (oml_wp_original_request($request)) {
+        if (oml_wp_original_request($request) === false) {
             $middlewareReversedList = array_reverse(self::$middlewareList);
             foreach ($middlewareReversedList as $middleware) {
                 $instance = call_user_func(array($middleware, "inject"));

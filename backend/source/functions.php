@@ -27,11 +27,12 @@ Middleware::$middlewareList = [
 
 # Filters
 
+add_filter("rest_exposed_cors_headers", "oml_expose_cors_headers_filter", 10, 2);
+add_filter("rest_endpoints", "oml_wp_block_original_endpoints_filter", 10, 1);
+add_filter("jwt_auth_expire", "oml_jwt_expiration_time_filter", 10, 0);
+
 add_filter("rest_pre_dispatch", [ Middleware::class, "requestFilter" ], 10, 3);
 add_filter("rest_post_dispatch", [ Middleware::class, "responseFilter" ], 10, 3);
-add_filter("rest_exposed_cors_headers", [ Middleware::class, "oml_expose_cors_headers_filter" ], 10, 2);
-add_filter("rest_endpoints", [ Middleware::class, "oml_wp_block_original_endpoints_filter"], 10, 1);
-add_filter("jwt_auth_expire", [ Middleware::class, "oml_jwt_expiration_time_filter"], 10, 0);
 
 # Hooks
 
