@@ -6,8 +6,8 @@ use WP_REST_Response;
 
 class NotFoundResponse extends WP_REST_Response
 {
-    public function __construct($data = null)
+    public function __construct()
     {
-        parent::__construct(["data" => $data], 404);
+        parent::__construct(["error" => "not_found"], 404);
     }
 }

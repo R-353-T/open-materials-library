@@ -72,7 +72,7 @@ abstract class Middleware extends Service
         mixed $response,
         WP_REST_Server $server,
         WP_REST_Request $request
-    ): mixed {
+    ) {
         return $response;
     }
 
@@ -89,7 +89,7 @@ abstract class Middleware extends Service
         WP_HTTP_Response $response,
         WP_REST_Server $server,
         WP_REST_Request $request
-    ): WP_HTTP_Response {
+    ) {
         return $response;
     }
 
