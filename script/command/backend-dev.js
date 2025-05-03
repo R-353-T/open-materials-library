@@ -69,5 +69,5 @@ while (true) {
         }
     }
 
-    await sleep((lintFlag === PHP_LINT_STATUS.ERROR ? 15000 : 3000));
+    await sleep((lintFlag === PHP_LINT_STATUS.ERROR ? 10000 : 1000));
 }
