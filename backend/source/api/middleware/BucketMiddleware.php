@@ -3,7 +3,7 @@
 namespace oml\api\middleware;
 
 use oml\php\abstract\Middleware;
-use oml\php\core\CallLimitExceededResponse;
+use oml\php\error\CallLimitExceededError;
 use WP_HTTP_Response;
 use WP_REST_Server;
 use WP_REST_Request;
@@ -25,7 +25,7 @@ class BucketMiddleware extends Middleware
             $bucket = $this->updateBucket();
 
             if ($bucket["count"] === 0) {
-                return new CallLimitExceededResponse();
+                return new CallLimitExceededError();
             }
         }
 

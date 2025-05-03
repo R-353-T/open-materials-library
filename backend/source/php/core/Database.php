@@ -2,11 +2,10 @@
 
 namespace oml\php\core;
 
-use oml\php\abstract\Service;
 use PDO;
 use Throwable;
 
-class Database extends Service
+class Database
 {
     public static ?PDO $PDO = null;
 

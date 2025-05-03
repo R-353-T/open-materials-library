@@ -13,7 +13,7 @@ class TestController extends Controller
     protected string $endpoint = "test";
     protected array $routeList = [
         [
-            "name"          => "helloWorld",
+            "endpoint"      => "/helloWorld",
             "callback"      => "getHelloWorld",
             "http_method"   => ControllerHttpMethod::GET,
             "permission"    => ControllerPermission::ALL

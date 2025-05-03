@@ -15,7 +15,9 @@ let elementPath = "";
 let elementStats = null;
 
 while (true) {
-    console.clear();
+    if(lintFlag === PHP_LINT_STATUS.ERROR) {
+        console.clear();
+    }
 
     const {
         createdElements,
@@ -69,5 +71,5 @@ while (true) {
         }
     }
 
-    await sleep((lintFlag === PHP_LINT_STATUS.ERROR ? 10000 : 1000));
+    await sleep(lintFlag === PHP_LINT_STATUS.ERROR ? 3000 : 500);
 }

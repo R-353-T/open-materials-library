@@ -2,8 +2,9 @@
 
 namespace oml\api\middleware;
 
+use oml\php\enum\ControllerErrorCode;
 use oml\php\abstract\Middleware;
-use oml\php\core\LoginLimitExceededResponse;
+use oml\php\error\LoginLimitExceededError;
 use WP_HTTP_Response;
 use WP_REST_Server;
 use WP_REST_Request;
@@ -29,7 +30,7 @@ class AuthLimitMiddleware extends Middleware
             $userInfo = $this->updateUserInfo();
 
             if ($userInfo["jailed"]) {
-                $response = new LoginLimitExceededResponse();
+                $response = new LoginLimitExceededError();
             }
         }
 
@@ -66,7 +67,7 @@ class AuthLimitMiddleware extends Middleware
 
                 $response->header("X-RateLimit-Limit", OML_API_LOGIN_ATTEMPT_LIMIT);
                 $response->header("X-RateLimit-Remaining", OML_API_LOGIN_ATTEMPT_LIMIT - $userInfo["attemps"]);
-                $data["error"] = "auth_forbidden";
+                $data[OML_API_ERRCODE] = ControllerErrorCode::FORBIDDEN;
                 unset($data["message"]);
                 unset($data["status"]);
             }
