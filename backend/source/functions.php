@@ -4,6 +4,7 @@ require_once __DIR__ . "/php/oml_constant.php";
 require_once __DIR__ . "/php/function/__index__.php";
 
 use oml\api\controller\TestController;
+use oml\api\middleware\AuthLimitMiddleware;
 use oml\api\middleware\BucketMiddleware;
 use oml\php\abstract\Controller;
 use oml\php\abstract\Middleware;
@@ -22,7 +23,8 @@ Controller::$controllerList = [
 # Middlewares
 
 Middleware::$middlewareList = [
-    BucketMiddleware::class
+    AuthLimitMiddleware::class,
+    BucketMiddleware::class,
 ];
 
 # Filters

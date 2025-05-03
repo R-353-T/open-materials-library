@@ -30,6 +30,7 @@ defined("OML_DATE_FORMAT") or define("OML_DATE_FORMAT", "Y-m-d H:i:s");
 # Auth
 
 defined("OML_AUTH_ENDPOINT") or define("OML_AUTH_ENDPOINT", "jwt-auth/v1");
+defined("OML_AUTH_LOGIN_ENDPOINT") or define("OML_AUTH_LOGIN_ENDPOINT", "/jwt-auth/v1/token");
 defined("OML_AUTH_EXPIRATION_TIME") or define("OML_AUTH_EXPIRATION_TIME", time() + DAY_IN_SECONDS * 7);
 
 # Api

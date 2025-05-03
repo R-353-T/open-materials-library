@@ -68,9 +68,9 @@ class BucketMiddleware extends Middleware
     }
 
     /**
-     * Gets the bucket, creating it if it doesn't exist
+     * Gets the user's bucket, creating it if it doesn't exist
      *
-     * @return array The bucket
+     * @return array The user's bucket
      */
     private function getBucket()
     {
@@ -85,9 +85,9 @@ class BucketMiddleware extends Middleware
     }
 
     /**
-     * Updates the bucket
+     * Updates the user's bucket
      *
-     * @return array The updated bucket
+     * @return array The updated user's bucket
      */
     private function updateBucket()
     {
