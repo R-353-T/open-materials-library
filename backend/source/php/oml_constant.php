@@ -16,6 +16,7 @@ defined("OML_CONNECTION_STRING") or define(
 # Database
 
 defined("OML_SQL_MIGRATION_TABLENAME") or define("OML_SQL_MIGRATION_TABLENAME", "oml_migrations");
+defined("OML_SQL_UNIQUE_PARAM_PREFIX") or define("OML_SQL_UNIQUE_PARAM_PREFIX", "omlw96_");
 
 # Directories
 
@@ -51,3 +52,5 @@ defined("OML_API_MAX_URL_LENGTH") or define("OML_API_MAX_URL_LENGTH", 1024);
 
 defined("OML_API_MAX_NUMBER") or define("OML_API_MAX_NUMBER", 2147483647); // PHP_MAX_INT 32 BITS
 defined("OML_API_MIN_NUMBER") or define("OML_API_MIN_NUMBER", -2147483648); // PHP_MIN_INT 32 BITS
+
+defined("OML_API_ERRCODE") or define("OML_API_ERRCODE", "code");
