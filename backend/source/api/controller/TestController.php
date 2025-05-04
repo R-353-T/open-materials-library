@@ -16,10 +16,16 @@ class TestController extends Controller
             "endpoint"      => "/helloWorld",
             "callback"      => "getHelloWorld",
             "http_method"   => ControllerHttpMethod::GET,
-            "permission"    => ControllerPermission::ALL
+            "permission"    => ControllerPermission::ALL,
+            "schema"        => null
         ]
     ];
 
+    /**
+     * @param WP_REST_Request $request
+     *
+     * @return OkResponse
+     */
     public function getHelloWorld(WP_REST_Request $request)
     {
         return new OkResponse("Hello World!");

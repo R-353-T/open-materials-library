@@ -7,6 +7,7 @@ use oml\php\core\HashMap;
 use oml\php\core\SqlSelectOptions;
 use oml\php\enum\SqlQueries;
 use PDO;
+use WP_Error;
 
 abstract class Repository extends Service
 {
@@ -26,9 +27,9 @@ abstract class Repository extends Service
      *
      * @param mixed $model The model to be inserted
      *
-     * @return object|null The inserted model if successful, null otherwise
+     * @return int|WP_Error
      */
-    public function insert(mixed $model): ?object
+    public function insert(mixed $model)
     {
         return null;
     }
@@ -38,9 +39,9 @@ abstract class Repository extends Service
      *
      * @param mixed $model The model to be updated
      *
-     * @return object|null The updated model if successful, null otherwise
+     * @return int|WP_Error
      */
-    public function update(mixed $model): ?object
+    public function update(mixed $model)
     {
         return null;
     }
@@ -51,9 +52,9 @@ abstract class Repository extends Service
      * @param int $id The ID of the model to be selected
      * @param bool $cache Whether to use the cache or not
      *
-     * @return object|null The selected model if successful, null otherwise
+     * @return false|object The selected model if successful, null otherwise
      */
-    public function selectById(int $id, bool $cache = true): false|object
+    public function selectById(int $id, bool $cache = true)
     {
         $model = null;
 
@@ -78,7 +79,7 @@ abstract class Repository extends Service
      *
      * @return bool Whether the deletion was successful or not
      */
-    public function deleteById(int $id): bool
+    public function deleteById(int $id)
     {
         $statement = Database::$PDO->prepare(SqlQueries::deleteById($this->table));
         $statement->bindValue(":id", $id, PDO::PARAM_INT);
@@ -99,7 +100,7 @@ abstract class Repository extends Service
      *
      * @return array The array of selected models
      */
-    public function selectAll(SqlSelectOptions $options = new SqlSelectOptions()): array
+    public function selectAll(SqlSelectOptions $options = new SqlSelectOptions())
     {
         $statement = Database::$PDO->prepare(SqlQueries::selectAll($this->table, $options));
         $options->applyWhereBinds($statement);
@@ -114,7 +115,7 @@ abstract class Repository extends Service
      *
      * @return int The count of all selected models
      */
-    public function countAll(SqlSelectOptions $options = new SqlSelectOptions()): int
+    public function countAll(SqlSelectOptions $options = new SqlSelectOptions())
     {
         $statement = Database::$PDO->prepare(SqlQueries::countAll($this->table, $options));
         $options->applyWhereBinds($statement);
@@ -129,7 +130,7 @@ abstract class Repository extends Service
      *
      * @return int The final page of all selected models
      */
-    public function finalPage(SqlSelectOptions $options = new SqlSelectOptions()): int
+    public function finalPage(SqlSelectOptions $options = new SqlSelectOptions())
     {
         $count = $this->countAll($options);
         if ($count === 0) {

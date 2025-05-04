@@ -2,40 +2,52 @@
 
 namespace oml\php\abstract;
 
-use oml\php\enum\ControllerParamErrorCode as ErrorCode;
+use oml\php\enum\ControllerParamErrorCode as ERRC;
 use oml\php\error\BadRequestError;
+use WP_Error;
+use WP_REST_Request;
 
 abstract class Validator extends Service
 {
-    protected mixed $repository;
-    protected BadRequestError $err;
+    protected ?object $repository = null;
 
-    public function __construct(mixed $repository)
+    /**
+     * Validates if the given value is a valid database index
+     *
+     * @param mixed $value Value to be validated
+     * @param WP_REST_Request $request The current HTTP request
+     * @param string $name The name of the element to be validated
+     *
+     * @return bool|WP_Error Returns true if it is valid, otherwise returns a WP_Error
+     */
+    public function validateId(mixed $value, WP_REST_Request $request, string $name): bool|WP_Error
     {
-        $this->repository = $repository;
-        $this->err = new BadRequestError();
+        if (oml_validate_database_index($value) === false) {
+            return new BadRequestError($name, ERRC::INVALID_DATABASE_INDEX);
+        }
+
+        if ($this->repository->selectById($value) === false) {
+            return new BadRequestError($name, ERRC::NOT_FOUND);
+        }
+
+        return true;
     }
 
     /**
-     * Validate that the given ID is valid
+     * Validates if the given value is a valid name
      *
-     * @param mixed $id The ID to validate
-     * @param string $name The name of the parameter to use in the error message
+     * @param mixed $value Value to be validated
+     * @param WP_REST_Request $request The current HTTP request
+     * @param string $name The name of the element to be validated
+     *
+     * @return bool|WP_Error Returns true if it is valid, otherwise returns a WP_Error
      */
-    public function validateId(mixed $id, string $name = 'id'): void
+    public function validateName(mixed $value, WP_REST_Request $request, string $name): bool|WP_Error
     {
-        if ($id === null) {
-            $this->err->addParameter($name, ErrorCode::REQUIRED);
-            return;
+        if (oml_sanitize_string($value) === null) {
+            return new BadRequestError($name, ERRC::INVALID_STRING);
         }
 
-        if (! oml_validate_database_index($id)) {
-            $this->err->addParameter($name, ErrorCode::INVALID_DATABASE_INDEX);
-            return;
-        }
-
-        if ($this->repository->selectById($id) === null) {
-            $this->err->addParameter($name, ErrorCode::INVALID_DATABASE_INDEX);
-        }
+        return true;
     }
 }

@@ -18,6 +18,8 @@ defined("OML_CONNECTION_STRING") or define(
 defined("OML_SQL_MIGRATION_TABLENAME") or define("OML_SQL_MIGRATION_TABLENAME", "oml_migrations");
 defined("OML_SQL_UNIQUE_PARAM_PREFIX") or define("OML_SQL_UNIQUE_PARAM_PREFIX", "omlw96_");
 
+defined("OML_SQL_MEDIA_TABLENAME") or define("OML_SQL_MEDIA_TABLENAME", "oml_datasheet_medias");
+
 # Directories
 
 defined("OML_ROOT_DIR") or define("OML_ROOT_DIR", get_template_directory());
@@ -37,6 +39,7 @@ defined("OML_AUTH_EXPIRATION_TIME") or define("OML_AUTH_EXPIRATION_TIME", time()
 # Api
 
 defined("OML_API_DEFAULT_PAGE_SIZE") or define("OML_API_DEFAULT_PAGE_SIZE", 32);
+defined("OML_API_MIN_PAGE_SIZE") or define("OML_API_MIN_PAGE_SIZE", 1);
 defined("OML_API_MAX_PAGE_SIZE") or define("OML_API_MAX_PAGE_SIZE", 128);
 defined("OML_API_MAX_FILE_SIZE") or define("OML_API_MAX_FILE_SIZE", 10 * 1024 * 1024); // 10 MB
 
@@ -45,6 +48,11 @@ defined("OML_API_CALL_INTERVAL") or define("OML_API_CALL_INTERVAL", 6);
 
 defined("OML_API_LOGIN_ATTEMPT_LIMIT") or define("OML_API_LOGIN_ATTEMPT_LIMIT", 5);
 defined("OML_API_JAIL_TIME") or define("OML_API_JAIL_TIME", OML_PRODUCTION ? 180 : 18);
+
+# Schema
+
+defined("OML_API_MIN_NAME_LENGTH") or define("OML_API_MIN_NAME_LENGTH", 3);
+defined("OML_API_MAX_DESCRIPTION_LENGTH") or define("OML_API_MAX_DESCRIPTION_LENGTH", 8192);
 
 defined("OML_API_MAX_LABEL_LENGTH") or define("OML_API_MAX_LABEL_LENGTH", 255);
 defined("OML_API_MAX_TEXT_LENGTH") or define("OML_API_MAX_TEXT_LENGTH", 65535);

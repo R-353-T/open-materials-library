@@ -31,19 +31,23 @@ abstract class Controller extends Service
     {
         foreach ($instance->routeList as $route) {
             [
-                "name" => $name,
+                "endpoint" => $endpoint,
                 "callback" => $callback,
                 "http_method" => $http_method,
-                "permission" => $permission
+                "permission" => $permission,
+                "schema" => $schema
             ] = $route;
+
+            $args = $schema === null ? [] : $instance->$schema();
 
             register_rest_route(
                 OML_NAMESPACE,
-                "/{$instance->endpoint}/{$name}",
+                "/{$instance->endpoint}{$endpoint}",
                 [
                     "callback"              => [$instance, $callback],
                     "methods"               => $http_method,
-                    "permission_callback"   => $permission
+                    "permission_callback"   => $permission,
+                    "args"                  => $args
                 ]
             );
         }
@@ -51,4 +55,8 @@ abstract class Controller extends Service
 
     protected string $endpoint;
     protected array $routeList = [];
+
+    public function __construct()
+    {
+    }
 }

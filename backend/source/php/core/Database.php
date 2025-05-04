@@ -29,6 +29,8 @@ class Database
      */
     public static function upgradeDatabase()
     {
+        self::initializeDatabase();
+
         $migrationList = self::selectMigrations();
         $files = scandir(OML_SQL_DIR);
 
@@ -70,7 +72,7 @@ class Database
     public static function applyMigration(string $filename)
     {
         $sqlQuery = "INSERT INTO " . OML_SQL_MIGRATION_TABLENAME . " (`name`) VALUES (:name)";
-        $sqlMigration = file_get_contents(OML_SQL_DIR . DIRECTORY_SEPARATOR . $filename);
+        $sqlMigration = file_get_contents(OML_SQL_DIR . DIRECTORY_SEPARATOR . $filename . ".sql");
 
         try {
             self::$PDO->query($sqlMigration);
