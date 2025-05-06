@@ -2,7 +2,7 @@
 
 namespace oml\api\model;
 
-class DatasheetMediaModel
+class MediaModel
 {
     public ?int $id;
     public string $name;

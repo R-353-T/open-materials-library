@@ -18,7 +18,7 @@ class HashMap
 
     public function get(string $key)
     {
-        return $this->map[$key] ?? null;
+        return $this->map[$key] ?? false;
     }
 
     public function remove(string $key)

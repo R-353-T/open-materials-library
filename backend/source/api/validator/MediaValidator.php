@@ -3,13 +3,13 @@
 namespace oml\api\validator;
 
 use oml\php\enum\ControllerParamErrorCode as ERRC;
-use oml\api\repository\DatasheetMediaRepository;
+use oml\api\repository\MediaRepository;
 use oml\php\abstract\Validator;
 use oml\php\error\BadRequestError;
 use WP_Error;
 use WP_REST_Request;
 
-class DatasheetMediaValidator extends Validator
+class MediaValidator extends Validator
 {
     private array $allowedMimeList = [
         "png"   => "image/png",
@@ -19,7 +19,7 @@ class DatasheetMediaValidator extends Validator
 
     public function __construct()
     {
-        $this->repository = DatasheetMediaRepository::inject();
+        $this->repository = MediaRepository::inject();
     }
 
     /**

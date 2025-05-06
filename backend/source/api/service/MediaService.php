@@ -7,7 +7,7 @@ use oml\php\error\InternalError;
 use Throwable;
 use WP_Error;
 
-class DatasheetMediaService extends Service
+class MediaService extends Service
 {
     /**
      * Upload a file and return its relative path

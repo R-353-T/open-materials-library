@@ -31,6 +31,11 @@ class SqlQueries
         return "SELECT COUNT(*) FROM {$table} {$options->getWhereQuery()}";
     }
 
+    public static function selectByName(string $table): string
+    {
+        return "SELECT * FROM {$table} WHERE `name` = :name";
+    }
+
     # Datasheet Media
 
     public static function insertMedia(string $table): string

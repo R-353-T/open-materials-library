@@ -18,7 +18,10 @@ defined("OML_CONNECTION_STRING") or define(
 defined("OML_SQL_MIGRATION_TABLENAME") or define("OML_SQL_MIGRATION_TABLENAME", "oml_migrations");
 defined("OML_SQL_UNIQUE_PARAM_PREFIX") or define("OML_SQL_UNIQUE_PARAM_PREFIX", "omlw96_");
 
-defined("OML_SQL_MEDIA_TABLENAME") or define("OML_SQL_MEDIA_TABLENAME", "oml_datasheet_medias");
+defined("OML_SQL_MEDIA_TABLENAME") or define("OML_SQL_MEDIA_TABLENAME", "oml_media");
+
+defined("OML_SQL_QUANTITY_TABLENAME") or define("OML_SQL_QUANTITY_TABLENAME", "oml_quantity");
+defined("OML_SQL_QUANTITY_ITEM_TABLENAME") or define("OML_SQL_QUANTITY_ITEM_TABLENAME", "oml_quantity_item");
 
 # Directories
 
@@ -51,7 +54,7 @@ defined("OML_API_JAIL_TIME") or define("OML_API_JAIL_TIME", OML_PRODUCTION ? 180
 
 # Schema
 
-defined("OML_API_MIN_NAME_LENGTH") or define("OML_API_MIN_NAME_LENGTH", 3);
+defined("OML_API_MIN_NAME_LENGTH") or define("OML_API_MIN_NAME_LENGTH", 1);
 defined("OML_API_MAX_DESCRIPTION_LENGTH") or define("OML_API_MAX_DESCRIPTION_LENGTH", 8192);
 
 defined("OML_API_MAX_LABEL_LENGTH") or define("OML_API_MAX_LABEL_LENGTH", 255);

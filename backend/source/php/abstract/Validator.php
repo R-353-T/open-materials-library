@@ -48,6 +48,17 @@ abstract class Validator extends Service
             return new BadRequestError($name, ERRC::INVALID_STRING);
         }
 
+        $origin = $this->repository->selectByName($value);
+        $id = $request->get_param("id");
+
+        if (
+            $origin !== false
+            && ($id === null
+            || ($id !== null && (int) $id !== $origin->id))
+        ) {
+            return new BadRequestError($name, ERRC::ALREADY_EXISTS);
+        }
+
         return true;
     }
 }

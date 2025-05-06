@@ -2,11 +2,11 @@
 
 namespace oml\api\controller;
 
-use oml\api\model\DatasheetMediaModel;
+use oml\api\model\MediaModel;
 use oml\php\enum\ControllerParamErrorCode as ERRC;
-use oml\api\repository\DatasheetMediaRepository;
-use oml\api\service\DatasheetMediaService;
-use oml\api\validator\DatasheetMediaValidator;
+use oml\api\repository\MediaRepository;
+use oml\api\service\MediaService;
+use oml\api\validator\MediaValidator;
 use oml\php\abstract\Controller;
 use oml\php\core\OkResponse;
 use oml\php\core\PageResponse;
@@ -18,7 +18,7 @@ use oml\php\error\NotFoundError;
 use PDO;
 use WP_REST_Request;
 
-class DatasheetMediaController extends Controller
+class MediaController extends Controller
 {
     protected string $endpoint = "media";
     protected array $routeList = [
@@ -59,16 +59,16 @@ class DatasheetMediaController extends Controller
         ]
     ];
 
-    private readonly DatasheetMediaRepository $repository;
-    private readonly DatasheetMediaValidator $validator;
-    private readonly DatasheetMediaService $service;
+    private readonly MediaRepository $repository;
+    private readonly MediaValidator $validator;
+    private readonly MediaService $service;
 
     public function __construct()
     {
         parent::__construct();
-        $this->repository = DatasheetMediaRepository::inject();
-        $this->validator = DatasheetMediaValidator::inject();
-        $this->service = DatasheetMediaService::inject();
+        $this->repository = MediaRepository::inject();
+        $this->validator = MediaValidator::inject();
+        $this->service = MediaService::inject();
     }
 
     # ----------------------------------------
@@ -175,7 +175,7 @@ class DatasheetMediaController extends Controller
      */
     public function create(WP_REST_Request $request)
     {
-        $model = new DatasheetMediaModel();
+        $model = new MediaModel();
         $model->name = $request->get_param("name");
         $model->description = $request->get_param("description");
 

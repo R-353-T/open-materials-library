@@ -6,6 +6,7 @@ use oml\php\core\Database;
 use oml\php\core\HashMap;
 use oml\php\core\SqlSelectOptions;
 use oml\php\enum\SqlQueries;
+use oml\php\error\NotImplementedError;
 use PDO;
 use WP_Error;
 
@@ -31,7 +32,7 @@ abstract class Repository extends Service
      */
     public function insert(mixed $model)
     {
-        return null;
+        return new NotImplementedError();
     }
 
     /**
@@ -43,7 +44,7 @@ abstract class Repository extends Service
      */
     public function update(mixed $model)
     {
-        return null;
+        return new NotImplementedError();
     }
 
     /**
@@ -56,7 +57,7 @@ abstract class Repository extends Service
      */
     public function selectById(int $id, bool $cache = true)
     {
-        $model = null;
+        $model = false;
 
         if ($cache && $this->cache->contains($id)) {
             $model = $this->cache->get($id);

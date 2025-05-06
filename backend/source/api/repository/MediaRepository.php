@@ -2,31 +2,24 @@
 
 namespace oml\api\repository;
 
-use oml\api\model\DatasheetMediaModel;
+use oml\api\model\MediaModel;
 use oml\php\abstract\Repository;
 use oml\php\core\Database;
+use oml\php\dal\SelectByName;
 use oml\php\enum\SqlQueries;
 use oml\php\error\InternalError;
 use PDO;
 use Throwable;
 
-class DatasheetMediaRepository extends Repository
+class MediaRepository extends Repository
 {
+    use SelectByName;
+
     public function __construct()
     {
-        parent::__construct(
-            OML_SQL_MEDIA_TABLENAME,
-            DatasheetMediaModel::class
-        );
+        parent::__construct(OML_SQL_MEDIA_TABLENAME, MediaModel::class);
     }
 
-    /**
-     * Inserts a datasheet media into the database
-     *
-     * @param DatasheetMediaModel $model The datasheet media model to be inserted
-     *
-     * @return int|InternalError The id of the inserted datasheet media or an InternalError
-     */
     public function insert(mixed $model)
     {
         try {
@@ -46,13 +39,6 @@ class DatasheetMediaRepository extends Repository
         }
     }
 
-    /**
-     * Updates a datasheet media by id
-     *
-     * @param DatasheetMediaModel $model The datasheet media model to be updated
-     *
-     * @return int|InternalError The id of the updated datasheet media or an InternalError
-     */
     public function update(mixed $model)
     {
         try {
