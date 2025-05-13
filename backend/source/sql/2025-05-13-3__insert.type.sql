@@ -1,0 +1,17 @@
+insert into `oml_type` (`id`, `name`, `column`, `inputId`) values
+(1, "TYPE", "typeId", 4),
+(2, "LABEL", "text", 1),
+(3, "TEXT", "text", 2),
+(4, "PASSWORD", "text", 6),
+(6, "BOOLEAN", "number", 5),
+(7, "NUMBER", "number", 3),
+(8, "MONEY", "text", 8),
+(9, "DATE", "timestamp", 9),
+(10, "DURATION", "text", 10),
+(11, "IMAGE", "NOT IMPLEMENTED", 4),
+(12, "IMAGE_VALUE", "mediaId", 7),
+(13, "ENUMERATOR", "NOT IMPLEMENTED", 4),
+(14, "ENUMERATOR_VALUE", "enumeratorItemId", 4),
+(15, "QUANTITY", "NOT IMPLEMENTED", 4),
+(16, "QUANTITY_VALUE", "quantityItemId", 4),
+(17, "DATASHEET", "datasheetId", 4);

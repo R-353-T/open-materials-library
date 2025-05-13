@@ -23,6 +23,9 @@ defined("OML_SQL_MEDIA_TABLENAME") or define("OML_SQL_MEDIA_TABLENAME", "oml_med
 defined("OML_SQL_QUANTITY_TABLENAME") or define("OML_SQL_QUANTITY_TABLENAME", "oml_quantity");
 defined("OML_SQL_QUANTITY_ITEM_TABLENAME") or define("OML_SQL_QUANTITY_ITEM_TABLENAME", "oml_quantity_item");
 
+defined("OML_SQL_TYPE_TABLENAME") or define("OML_SQL_TYPE_TABLENAME", "oml_type");
+defined("OML_SQL_TYPE_INPUT_TABLENAME") or define("OML_SQL_TYPE_INPUT_TABLENAME", "oml_type_input");
+
 # Directories
 
 defined("OML_ROOT_DIR") or define("OML_ROOT_DIR", get_template_directory());
