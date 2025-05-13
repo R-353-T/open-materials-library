@@ -2,10 +2,11 @@
 
 namespace oml\api\model;
 
-class MediaModel
+class QuantityModel
 {
     public ?int $id = null;
     public string $name;
     public string $description;
-    public string $path;
+
+    public array $items;
 }

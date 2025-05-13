@@ -4,6 +4,7 @@ require_once __DIR__ . "/php/oml_constant.php";
 require_once __DIR__ . "/php/function/__index__.php";
 
 use oml\api\controller\MediaController;
+use oml\api\controller\QuantityController;
 use oml\api\controller\TestController;
 use oml\api\middleware\AuthLimitMiddleware;
 use oml\api\middleware\BucketMiddleware;
@@ -19,6 +20,7 @@ Database::initializeDatabase();
 
 Controller::$controllerList = [
     MediaController::class,
+    QuantityController::class,
     TestController::class
 ];
 

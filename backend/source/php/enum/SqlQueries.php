@@ -6,14 +6,11 @@ use oml\php\core\SqlSelectOptions;
 
 class SqlQueries
 {
+    # SELECT
+
     public static function selectById(string $table): string
     {
         return "SELECT * FROM {$table} WHERE `id` = :id";
-    }
-
-    public static function deleteById(string $table): string
-    {
-        return "DELETE FROM {$table} WHERE `id` = :id";
     }
 
     public static function selectAll(string $table, SqlSelectOptions $options): string
@@ -26,32 +23,22 @@ class SqlQueries
         SQL;
     }
 
-    public static function countAll(string $table, SqlSelectOptions $options): string
-    {
-        return "SELECT COUNT(*) FROM {$table} {$options->getWhereQuery()}";
-    }
-
     public static function selectByName(string $table): string
     {
         return "SELECT * FROM {$table} WHERE `name` = :name";
     }
 
-    # Datasheet Media
+    # COUNT
 
-    public static function insertMedia(string $table): string
+    public static function countAll(string $table, SqlSelectOptions $options): string
     {
-        return <<<SQL
-        INSERT INTO {$table} (`name`, `description`, `path`)
-        VALUES (:name, :description, :path)
-        SQL;
+        return "SELECT COUNT(*) FROM {$table} {$options->getWhereQuery()}";
     }
 
-    public static function updateMedia(string $table): string
+    # DELETE
+
+    public static function deleteById(string $table): string
     {
-        return <<<SQL
-        UPDATE {$table}
-        SET `name` = :name, `description` = :description, `path` = :path
-        WHERE `id` = :id
-        SQL;
+        return "DELETE FROM {$table} WHERE `id` = :id";
     }
 }

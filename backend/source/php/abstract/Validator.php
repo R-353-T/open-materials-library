@@ -11,16 +11,7 @@ abstract class Validator extends Service
 {
     protected ?object $repository = null;
 
-    /**
-     * Validates if the given value is a valid database index
-     *
-     * @param mixed $value Value to be validated
-     * @param WP_REST_Request $request The current HTTP request
-     * @param string $name The name of the element to be validated
-     *
-     * @return bool|WP_Error Returns true if it is valid, otherwise returns a WP_Error
-     */
-    public function validateId(mixed $value, WP_REST_Request $request, string $name): bool|WP_Error
+    public function validateId(mixed $value, WP_REST_Request $request, string|array $name): bool|WP_Error
     {
         if (oml_validate_database_index($value) === false) {
             return new BadRequestError($name, ERRC::INVALID_DATABASE_INDEX);
@@ -33,19 +24,18 @@ abstract class Validator extends Service
         return true;
     }
 
-    /**
-     * Validates if the given value is a valid name
-     *
-     * @param mixed $value Value to be validated
-     * @param WP_REST_Request $request The current HTTP request
-     * @param string $name The name of the element to be validated
-     *
-     * @return bool|WP_Error Returns true if it is valid, otherwise returns a WP_Error
-     */
     public function validateName(mixed $value, WP_REST_Request $request, string $name): bool|WP_Error
     {
         if (oml_sanitize_string($value) === null) {
-            return new BadRequestError($name, ERRC::INVALID_STRING);
+            return new BadRequestError($name, ERRC::INVALID_TYPE);
+        }
+
+        if (strlen(oml_sanitize_string($value)) < OML_API_MIN_NAME_LENGTH) {
+            return new BadRequestError($name, ERRC::TOO_SHORT);
+        }
+
+        if (strlen($value) > OML_API_MAX_LABEL_LENGTH) {
+            return new BadRequestError($name, ERRC::TOO_LONG);
         }
 
         $origin = $this->repository->selectByName($value);

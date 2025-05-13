@@ -106,7 +106,13 @@ abstract class Repository extends Service
         $statement = Database::$PDO->prepare(SqlQueries::selectAll($this->table, $options));
         $options->applyWhereBinds($statement);
         $statement->execute();
-        return $statement->fetchAll(PDO::FETCH_CLASS, $this->model);
+        $modelList = $statement->fetchAll(PDO::FETCH_CLASS, $this->model);
+
+        foreach ($modelList as $model) {
+            $this->cache->set($model->id, $model);
+        }
+
+        return $modelList;
     }
 
     /**

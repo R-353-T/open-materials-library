@@ -25,6 +25,11 @@ $header_infos = array(
 </head>
 <body
     class="<?php echo $header_infos["body_classes"]; ?>"
-    style="background: #000000; min-height: 100vh;">
+    style="
+        background:  #101010;
+        color:  #dedede;
+        min-height: 100vh;
+        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+    ">
     <!-- wp_body_open -->
     <?php wp_body_open(); ?>

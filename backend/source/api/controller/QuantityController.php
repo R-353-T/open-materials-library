@@ -2,26 +2,23 @@
 
 namespace oml\api\controller;
 
-use oml\api\model\MediaModel;
-use oml\php\enum\ControllerParamErrorCode as ERRC;
-use oml\api\repository\MediaRepository;
-use oml\api\schema\MediaSchema;
-use oml\api\service\MediaService;
-use oml\api\validator\MediaValidator;
+use oml\api\model\QuantityItemModel;
+use oml\api\model\QuantityModel;
+use oml\api\repository\QuantityRepository;
+use oml\api\schema\QuantitySchema;
 use oml\php\abstract\Controller;
 use oml\php\core\OkResponse;
 use oml\php\core\PageResponse;
 use oml\php\core\SqlSelectOptions;
 use oml\php\enum\ControllerHttpMethod;
 use oml\php\enum\ControllerPermission;
-use oml\php\error\BadRequestError;
 use oml\php\error\NotFoundError;
 use PDO;
 use WP_REST_Request;
 
-class MediaController extends Controller
+class QuantityController extends Controller
 {
-    protected string $endpoint = "media";
+    protected string $endpoint = "quantity";
     protected array $routeList = [
         [
             "endpoint"      => "",
@@ -60,49 +57,14 @@ class MediaController extends Controller
         ]
     ];
 
-    public readonly MediaSchema $schema;
-    private readonly MediaRepository $repository;
-    private readonly MediaService $service;
-    private readonly MediaValidator $validator;
+    public readonly QuantitySchema $schema;
+    private readonly QuantityRepository $repository;
 
     public function __construct()
     {
         parent::__construct();
-        $this->repository = MediaRepository::inject();
-        $this->schema = MediaSchema::inject();
-        $this->service = MediaService::inject();
-        $this->validator = MediaValidator::inject();
-    }
-
-    public function create(WP_REST_Request $request)
-    {
-        $model = new MediaModel();
-        $model->name = $request->get_param("name");
-        $model->description = $request->get_param("description");
-
-        # START VALIDATE FILE
-
-        if (isset($request->get_file_params()["file"]) === false) {
-            return new BadRequestError("file", ERRC::REQUIRED);
-        }
-
-        $file = $request->get_file_params()["file"];
-        $err = $this->validator->validateFile($file, $request, "file");
-        if ($err !== true) {
-            return $err;
-        }
-
-        # END VALIDATE FILE
-
-        $model->path = $this->service->upload($file);
-        $error = $this->repository->insert($model);
-
-        if (is_wp_error($error)) {
-            $this->service->delete($model->path);
-            return $error;
-        } else {
-            return new OkResponse($model);
-        }
+        $this->repository = QuantityRepository::inject();
+        $this->schema = QuantitySchema::inject();
     }
 
     public function delete(WP_REST_Request $request)
@@ -119,37 +81,24 @@ class MediaController extends Controller
         return new OkResponse($model);
     }
 
-    public function update(WP_REST_Request $request)
+    public function create(WP_REST_Request $request)
     {
-        $id = $request->get_param("id");
-        $model = $this->repository->selectById($id);
+        $model = new QuantityModel();
         $model->name = $request->get_param("name");
         $model->description = $request->get_param("description");
-        $oldFilePath = $model->path;
+        $items = $request->get_param("items");
 
-        # START VALIDATE FILE
-
-        if (isset($request->get_file_params()["file"])) {
-            $file = $request->get_file_params()["file"];
-            $err = $this->validator->validateFile($file, $request, "file");
-            if ($err !== true) {
-                return $err;
-            }
-            $model->path = $this->service->upload($file);
+        foreach ($items as $item) {
+            $itemModel = new QuantityItemModel();
+            $itemModel->value = $item["value"];
+            $model->items[] = $itemModel;
         }
 
-        # END VALIDATE FILE
-
-        $error = $this->repository->update($model);
+        $error = $this->repository->insert($model);
 
         if (is_wp_error($error)) {
-            $this->service->delete($model->path);
             return $error;
         } else {
-            if ($model->path !== $oldFilePath) {
-                $this->service->delete($oldFilePath);
-            }
-
             return new OkResponse($model);
         }
     }
@@ -180,6 +129,37 @@ class MediaController extends Controller
         } else {
             $items = $this->repository->selectAll($options);
             return new PageResponse($items, $indexPage, $pageSize, $finalPage);
+        }
+    }
+
+    public function update(WP_REST_Request $request)
+    {
+        $id = $request->get_param("id");
+        $model = $this->repository->selectById($id);
+        $model->name = $request->get_param("name");
+        $model->description = $request->get_param("description");
+        $model->items = [];
+
+        $items = $request->get_param("items");
+
+        foreach ($items as $item) {
+            $itemModel = new QuantityItemModel();
+
+            if (isset($item["id"])) {
+                $itemModel->id = $item["id"];
+            }
+
+            $itemModel->value = $item["value"];
+            $model->items[] = $itemModel;
+        }
+
+        $error = $this->repository->update($model);
+
+        if (is_wp_error($error)) {
+            return $error;
+        } else {
+            $model = $this->repository->selectById($model->id);
+            return new OkResponse($model);
         }
     }
 }

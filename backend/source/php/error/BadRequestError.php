@@ -7,7 +7,7 @@ use WP_Error;
 
 class BadRequestError extends WP_Error
 {
-    public function __construct(string $property, string $errorCode)
+    public function __construct(string|array $property, string $errorCode)
     {
         parent::__construct(
             ControllerErrorCode::BAD_REQUEST,

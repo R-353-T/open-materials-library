@@ -17,7 +17,7 @@ class PageResponse extends WP_REST_Response
                 "data" => $items,
                 "indexPage" => $indexPage,
                 "pageSize" => $pageSize,
-                "finalPage" => $finalPage
+                "finalPageIndex" => $finalPage
             ],
             200
         );

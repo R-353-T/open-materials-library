@@ -38,7 +38,7 @@ abstract class Controller extends Service
                 "schema" => $schema
             ] = $route;
 
-            $args = $schema === null ? [] : $instance->$schema();
+            $args = $schema === null ? [] : $instance->schema->$schema();
 
             register_rest_route(
                 OML_NAMESPACE,
@@ -55,8 +55,4 @@ abstract class Controller extends Service
 
     protected string $endpoint;
     protected array $routeList = [];
-
-    public function __construct()
-    {
-    }
 }

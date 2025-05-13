@@ -3,10 +3,10 @@
 namespace oml\api\repository;
 
 use oml\api\model\MediaModel;
+use oml\api\sql\MediaSql;
 use oml\php\abstract\Repository;
 use oml\php\core\Database;
 use oml\php\dal\SelectByName;
-use oml\php\enum\SqlQueries;
 use oml\php\error\InternalError;
 use PDO;
 use Throwable;
@@ -24,7 +24,8 @@ class MediaRepository extends Repository
     {
         try {
             Database::$PDO->beginTransaction();
-            $statement = Database::$PDO->prepare(SqlQueries::insertMedia(OML_SQL_MEDIA_TABLENAME));
+            $query = MediaSql::insert($this->table);
+            $statement = Database::$PDO->prepare($query);
             $statement->bindValue(":name", $model->name, PDO::PARAM_STR);
             $statement->bindValue(":description", $model->description, PDO::PARAM_STR);
             $statement->bindValue(":path", $model->path, PDO::PARAM_STR);
@@ -35,7 +36,7 @@ class MediaRepository extends Repository
             return $id;
         } catch (Throwable $error) {
             Database::$PDO->rollBack();
-            return new InternalError(500, $error->getMessage(), $error->getTraceAsString());
+            return new InternalError($error->getMessage(), $error->getTraceAsString());
         }
     }
 
@@ -43,7 +44,8 @@ class MediaRepository extends Repository
     {
         try {
             Database::$PDO->beginTransaction();
-            $statement = Database::$PDO->prepare(SqlQueries::updateMedia(OML_SQL_MEDIA_TABLENAME));
+            $query = MediaSql::update($this->table);
+            $statement = Database::$PDO->prepare($query);
             $statement->bindValue(":name", $model->name, PDO::PARAM_STR);
             $statement->bindValue(":description", $model->description, PDO::PARAM_STR);
             $statement->bindValue(":path", $model->path, PDO::PARAM_STR);
@@ -53,7 +55,7 @@ class MediaRepository extends Repository
             return $model->id;
         } catch (Throwable $error) {
             Database::$PDO->rollBack();
-            return new InternalError(500, $error->getMessage(), $error->getTraceAsString());
+            return new InternalError($error->getMessage(), $error->getTraceAsString());
         }
     }
 }
