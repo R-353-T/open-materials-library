@@ -41,7 +41,6 @@ class QuantityItemValidator extends Validator
 
     public function validateValue(mixed $item, WP_REST_Request $request, string|array $name)
     {
-        $id = isset($item["id"]) ? $item["id"] : null;
         $value = $item["value"];
 
         if (oml_sanitize_string($value) === null) {
@@ -57,28 +56,9 @@ class QuantityItemValidator extends Validator
         }
 
         $items = $request->get_param("items");
-        $count = array_filter($items, fn($i) => $i["value"] === $value);
-
+        $count = array_filter($items, fn($i) => strtolower($i["value"]) === strtolower($value));
         if (count($count) > 1) {
             return new BadRequestError($name, ERRC::DOUBLE);
-        }
-
-        if ($request->get_param("id") !== null) {
-            $quantity = $this->quantityRepository->selectById($request->get_param("id"));
-
-            if ($quantity !== false) {
-                $exists = array_filter(
-                    $quantity->items,
-                    function ($i) use ($value, $id) {
-                        return strtolower($i->value) === strtolower($value)
-                        && $i->id !== $id;
-                    }
-                );
-
-                if (count($exists) >= 1) {
-                    return new BadRequestError($name, ERRC::DOUBLE);
-                }
-            }
         }
 
         return true;

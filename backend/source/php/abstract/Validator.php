@@ -38,15 +38,17 @@ abstract class Validator extends Service
             return new BadRequestError($name, ERRC::TOO_LONG);
         }
 
-        $origin = $this->repository->selectByName($value);
-        $id = $request->get_param("id");
+        if (isset($this->repository)) {
+            $origin = $this->repository->selectByName($value);
+            $id = $request->get_param("id");
 
-        if (
-            $origin !== false
-            && ($id === null
-            || ($id !== null && (int) $id !== $origin->id))
-        ) {
-            return new BadRequestError($name, ERRC::ALREADY_EXISTS);
+            if (
+                $origin !== false
+                && ($id === null
+                || ($id !== null && (int) $id !== $origin->id))
+            ) {
+                return new BadRequestError($name, ERRC::ALREADY_EXISTS);
+            }
         }
 
         return true;

@@ -80,7 +80,9 @@ class MediaController extends Controller
         $model->name = $request->get_param("name");
         $model->description = $request->get_param("description");
 
-        # START VALIDATE FILE
+        // * ------------------------------------------ *
+        // * VALIDATE FILE                              *
+        // * ------------------------------------------ *
 
         if (isset($request->get_file_params()["file"]) === false) {
             return new BadRequestError("file", ERRC::REQUIRED);
@@ -92,7 +94,7 @@ class MediaController extends Controller
             return $err;
         }
 
-        # END VALIDATE FILE
+        // * ------------------------------------------ *
 
         $model->path = $this->service->upload($file);
         $error = $this->repository->insert($model);
@@ -100,9 +102,9 @@ class MediaController extends Controller
         if (is_wp_error($error)) {
             $this->service->delete($model->path);
             return $error;
-        } else {
-            return new OkResponse($model);
         }
+
+        return new OkResponse($model);
     }
 
     public function delete(WP_REST_Request $request)
@@ -127,7 +129,9 @@ class MediaController extends Controller
         $model->description = $request->get_param("description");
         $oldFilePath = $model->path;
 
-        # START VALIDATE FILE
+        // * ------------------------------------------ *
+        // * VALIDATE FILE                              *
+        // * ------------------------------------------ *
 
         if (isset($request->get_file_params()["file"])) {
             $file = $request->get_file_params()["file"];
@@ -135,23 +139,24 @@ class MediaController extends Controller
             if ($err !== true) {
                 return $err;
             }
+
             $model->path = $this->service->upload($file);
         }
 
-        # END VALIDATE FILE
+        // * ------------------------------------------ *
 
         $error = $this->repository->update($model);
 
         if (is_wp_error($error)) {
             $this->service->delete($model->path);
             return $error;
-        } else {
-            if ($model->path !== $oldFilePath) {
-                $this->service->delete($oldFilePath);
-            }
-
-            return new OkResponse($model);
         }
+
+        if ($model->path !== $oldFilePath) {
+            $this->service->delete($oldFilePath);
+        }
+
+        return new OkResponse($model);
     }
 
     public function list(WP_REST_Request $request)
@@ -177,9 +182,9 @@ class MediaController extends Controller
 
         if ($finalPage < $indexPage) {
             return new NotFoundError();
-        } else {
-            $items = $this->repository->selectAll($options);
-            return new PageResponse($items, $indexPage, $pageSize, $finalPage);
         }
+
+        $items = $this->repository->selectAll($options);
+        return new PageResponse($items, $indexPage, $pageSize, $finalPage);
     }
 }

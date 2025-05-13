@@ -73,7 +73,7 @@ class QuantityRepository extends Repository
             $statement->execute();
 
             // * ------------------------------------------ *
-            // * 1. Increment items positions               *
+            // * 1. Free positions and values of items      *
             // * ------------------------------------------ *
 
             $this->itemRepository->incrementQuantityPositions($model->id);
@@ -86,10 +86,11 @@ class QuantityRepository extends Repository
             $updatedList = [];
 
             foreach ($model->items as $position => $item) {
+                if (isset($item->id)) {
+                    $updatedList[] = $item->id;
+                }
                 $item->quantityId = $model->id;
                 $item->position = $position;
-                $this->itemRepository->save($item);
-                $updatedList[] = $item->id;
             }
 
             // * ------------------------------------------ *
@@ -97,6 +98,14 @@ class QuantityRepository extends Repository
             // * ------------------------------------------ *
 
             $this->itemRepository->deleteNotInList($model->id, $updatedList);
+
+            // * ------------------------------------------ *
+            // * 4. Insert items                            *
+            // * ------------------------------------------ *
+
+            foreach ($model->items as $item) {
+                $this->itemRepository->save($item);
+            }
 
             Database::$PDO->commit();
             return $model->id;

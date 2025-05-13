@@ -22,15 +22,6 @@ class MediaValidator extends Validator
         $this->repository = MediaRepository::inject();
     }
 
-    /**
-     * Validates if the given value is a valid file
-     *
-     * @param mixed $param Value to be validated
-     * @param WP_REST_Request $request The current HTTP request
-     * @param string $name The name of the element to be validated
-     *
-     * @return bool|WP_Error Returns true if it is valid, otherwise returns a WP_Error
-     */
     public function validateFile(mixed $param, WP_REST_Request $request, string $name): bool|WP_Error
     {
         [
