@@ -1,8 +1,8 @@
 create table oml_enumerator_item (
     `id` int(11) unsigned not null auto_increment primary key,
     `position` int(11) unsigned not null,
-    `text` varchar(255) not null,
-    `number` decimal(10, 6) not null,
+    `text` varchar(255),
+    `number` decimal(10, 6),
     
     `enumeratorId` int(11) unsigned not null,
     `quantityItemId` int(11) unsigned,

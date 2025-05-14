@@ -2,10 +2,7 @@
 
 namespace oml\api\controller;
 
-use oml\api\model\QuantityItemModel;
-use oml\api\model\QuantityModel;
-use oml\api\repository\QuantityRepository;
-use oml\api\schema\QuantitySchema;
+use oml\api\repository\EnumeratorRepository;
 use oml\php\abstract\Controller;
 use oml\php\core\OkResponse;
 use oml\php\core\PageResponse;
@@ -16,9 +13,9 @@ use oml\php\error\NotFoundError;
 use PDO;
 use WP_REST_Request;
 
-class QuantityController extends Controller
+class EnumeratorController extends Controller
 {
-    protected string $endpoint = "quantity";
+    protected string $endpoint = "enumerator";
     protected array $routeList = [
         [
             "endpoint"      => "",
@@ -57,36 +54,16 @@ class QuantityController extends Controller
         ]
     ];
 
-    public readonly QuantitySchema $schema;
-    private readonly QuantityRepository $repository;
+    private readonly EnumeratorRepository $repository;
 
     public function __construct()
     {
         parent::__construct();
-        $this->repository = QuantityRepository::inject();
-        $this->schema = QuantitySchema::inject();
+        $this->repository = EnumeratorRepository::inject();
     }
 
     public function create(WP_REST_Request $request)
     {
-        $model = new QuantityModel();
-        $model->name = $request->get_param("name");
-        $model->description = $request->get_param("description");
-        $items = $request->get_param("items");
-
-        foreach ($items as $item) {
-            $itemModel = new QuantityItemModel();
-            $itemModel->value = $item["value"];
-            $model->items[] = $itemModel;
-        }
-
-        $error = $this->repository->insert($model);
-
-        if (is_wp_error($error)) {
-            return $error;
-        } else {
-            return new OkResponse($model);
-        }
     }
 
     public function delete(WP_REST_Request $request)
@@ -134,32 +111,5 @@ class QuantityController extends Controller
 
     public function update(WP_REST_Request $request)
     {
-        $id = $request->get_param("id");
-        $model = $this->repository->selectById($id);
-        $model->name = $request->get_param("name");
-        $model->description = $request->get_param("description");
-        $model->items = [];
-
-        $items = $request->get_param("items");
-
-        foreach ($items as $item) {
-            $itemModel = new QuantityItemModel();
-
-            if (isset($item["id"])) {
-                $itemModel->id = $item["id"];
-            }
-
-            $itemModel->value = $item["value"];
-            $model->items[] = $itemModel;
-        }
-
-        $error = $this->repository->update($model);
-
-        if (is_wp_error($error)) {
-            return $error;
-        } else {
-            $model = $this->repository->selectById($model->id);
-            return new OkResponse($model);
-        }
     }
 }

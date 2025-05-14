@@ -3,6 +3,7 @@
 require_once __DIR__ . "/php/oml_constant.php";
 require_once __DIR__ . "/php/function/__index__.php";
 
+use oml\api\controller\EnumeratorController;
 use oml\api\controller\MediaController;
 use oml\api\controller\QuantityController;
 use oml\api\controller\TestController;
@@ -20,6 +21,7 @@ Database::initializeDatabase();
 # Controllers
 
 Controller::$controllerList = [
+    EnumeratorController::class,
     TypeController::class,
     MediaController::class,
     QuantityController::class,

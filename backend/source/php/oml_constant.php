@@ -26,6 +26,9 @@ defined("OML_SQL_QUANTITY_ITEM_TABLENAME") or define("OML_SQL_QUANTITY_ITEM_TABL
 defined("OML_SQL_TYPE_TABLENAME") or define("OML_SQL_TYPE_TABLENAME", "oml_type");
 defined("OML_SQL_TYPE_INPUT_TABLENAME") or define("OML_SQL_TYPE_INPUT_TABLENAME", "oml_type_input");
 
+defined("OML_SQL_ENUMERATOR_TABLENAME") or define("OML_SQL_ENUMERATOR_TABLENAME", "oml_enumerator");
+defined("OML_SQL_ENUMERATOR_ITEM_TABLENAME") or define("OML_SQL_ENUMERATOR_ITEM_TABLENAME", "oml_enumerator_item");
+
 # Directories
 
 defined("OML_ROOT_DIR") or define("OML_ROOT_DIR", get_template_directory());
