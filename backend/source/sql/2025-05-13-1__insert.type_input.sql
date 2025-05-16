@@ -1,4 +1,4 @@
-insert into `oml_type_input` (`id`, `name`) values
+insert into `oml__type_input` (`id`, `name`) values
 (1, "TEXT"),
 (2, "TEXTAREA"),
 (3, "NUMBER"),

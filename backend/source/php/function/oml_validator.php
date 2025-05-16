@@ -1,6 +1,6 @@
 <?php
 
-use oml\api\enum\APIError;
+use oml\php\enum\APIError;
 use oml\php\abstract\Repository;
 
 function oml_validate_database_index(mixed $value, ?Repository $repository = null): array
@@ -24,7 +24,7 @@ function oml_validate_database_index(mixed $value, ?Repository $repository = nul
     return [true, (int) $value];
 }
 
-function oml_validate_name(mixed $value, ?object $repository = null): array
+function oml_validate_name(mixed $value, ?object $repository = null, ?int $id = null): array
 {
     if (is_string($value) === false) {
         return [false, APIError::PARAMETER_INVALID];
@@ -40,7 +40,9 @@ function oml_validate_name(mixed $value, ?object $repository = null): array
         return [false, APIError::PARAMATER_STRING_TOO_LONG];
     }
 
-    if ($repository !== null && $repository->selectByName($value)) {
+    $match = $repository->selectByName($value);
+
+    if ($repository !== null && $match !== false && $match->id !== $id) {
         return [false, APIError::PARAMETER_NOT_FREE];
     }
 
@@ -106,6 +108,10 @@ function oml_validate_image(mixed $value, $required = true): array
 
 function oml_validate_pagination_index(mixed $value): array
 {
+    if ($value === null) {
+        return [false, APIError::PARAMETER_REQUIRED];
+    }
+
     $isUnsignedInt = filter_var(
         $value,
         FILTER_VALIDATE_INT,

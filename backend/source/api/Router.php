@@ -16,37 +16,35 @@ class Router extends Service
             // * MEDIA *
 
             "media" => [
-                [
-                    "schema" => MediaSchema::inject(),
-                    "validator" => MediaValidator::inject(),
-                    "endpoints" => [
-                        [
-                            "callback"      => "create",
-                            "http_method"   => APIMethod::POST,
-                            "permission"    => APIPermission::EDITOR
-                        ],
-                        [
-                            "callback"      => "get",
-                            "http_method"   => APIMethod::GET,
-                            "permission"    => APIPermission::SUBSCRIBER,
-                        ],
-                        [
-                            "callback"      => "delete",
-                            "http_method"   => APIMethod::DELETE,
-                            "permission"    => APIPermission::EDITOR,
-                        ],
-                        [
-                            "endpoint"      => "/list",
-                            "callback"      => "list",
-                            "http_method"   => APIMethod::GET,
-                            "permission"    => APIPermission::SUBSCRIBER
-                        ],
-                        [
-                            "endpoint"      => "/update",
-                            "callback"      => "update",
-                            "http_method"   => APIMethod::POST,
-                            "permission"    => APIPermission::EDITOR
-                        ]
+                "schema" => MediaSchema::inject(),
+                "validator" => MediaValidator::inject(),
+                "endpoints" => [
+                    [
+                        "callback"      => "create",
+                        "http_method"   => APIMethod::POST,
+                        "permission"    => APIPermission::EDITOR
+                    ],
+                    [
+                        "callback"      => "get",
+                        "http_method"   => APIMethod::GET,
+                        "permission"    => APIPermission::SUBSCRIBER,
+                    ],
+                    [
+                        "callback"      => "delete",
+                        "http_method"   => APIMethod::DELETE,
+                        "permission"    => APIPermission::EDITOR,
+                    ],
+                    [
+                        "endpoint"      => "/list",
+                        "callback"      => "list",
+                        "http_method"   => APIMethod::GET,
+                        "permission"    => APIPermission::SUBSCRIBER
+                    ],
+                    [
+                        "endpoint"      => "/update",
+                        "callback"      => "update",
+                        "http_method"   => APIMethod::POST,
+                        "permission"    => APIPermission::EDITOR
                     ]
                 ]
             ]

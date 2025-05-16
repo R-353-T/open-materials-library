@@ -1,6 +1,6 @@
 <?php
 
-namespace oml\api\enum;
+namespace oml\php\enum;
 
 class APIError
 {

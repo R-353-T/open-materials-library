@@ -21,6 +21,7 @@ abstract class Repository extends Service
         $this->table = $table;
         $this->model = $model;
         $this->cache = new HashMap();
+        Database::initializeDatabase();
     }
 
     public function insert(mixed $model): int|WP_Error
@@ -51,7 +52,7 @@ abstract class Repository extends Service
         return $model;
     }
 
-    public function deleteById(int $id): false|int
+    public function deleteById(int $id): bool
     {
         $statement = Database::$PDO->prepare(SqlQueries::deleteById($this->table));
         $statement->bindValue(":id", $id, PDO::PARAM_INT);

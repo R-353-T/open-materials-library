@@ -2,7 +2,7 @@
 
 namespace oml\php\error;
 
-use oml\api\enum\APIError;
+use oml\php\enum\APIError;
 use WP_Error;
 
 class NotImplementedError extends WP_Error

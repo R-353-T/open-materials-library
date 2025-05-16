@@ -1,4 +1,4 @@
-create table oml_media (
+create table oml__media (
     `id` int(11) unsigned not null auto_increment primary key,
     `name` varchar(255) not null,
     `description` varchar(8192) not null,

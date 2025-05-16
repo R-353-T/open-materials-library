@@ -3,7 +3,7 @@
 namespace oml\api\validator;
 
 use oml\api\controller\MediaController;
-use oml\api\enum\APIError;
+use oml\php\enum\APIError;
 use oml\api\model\MediaModel;
 use oml\api\repository\MediaRepository;
 use oml\api\service\MediaService;
@@ -24,6 +24,7 @@ class MediaValidator extends Validator
         parent::__construct();
         $this->controller = MediaController::inject();
         $this->service = MediaService::inject();
+        $this->repository = MediaRepository::inject();
     }
 
     public function create(WP_REST_Request $request)
@@ -46,7 +47,9 @@ class MediaValidator extends Validator
         $file = oml_validate_image($files);
 
         if ($file[0]) {
-            $media->path = $this->service->upload($file);
+            if (count($errors) === 0) {
+                $media->path = $this->service->upload($file[1]);
+            }
         } else {
             $errors["file"] = $file[1];
         }
@@ -100,13 +103,15 @@ class MediaValidator extends Validator
         # Id
         $id = $request->get_param("id");
         $id = oml_validate_database_index($id, $this->repository);
-        self::apply($id, $errors, $media, "id");
+        $hasId = self::apply($id, $errors, $media, "id");
         $media = $this->repository->selectById($media->id);
 
         # Name
-        $name = $request->get_param("name");
-        $name = oml_validate_name($name, $this->repository);
-        self::apply($name, $errors, $media, "name");
+        if ($hasId) {
+            $name = $request->get_param("name");
+            $name = oml_validate_name($name, $this->repository, $media->id);
+            self::apply($name, $errors, $media, "name");
+        }
 
         # Description
         $description = $request->get_param("description");
@@ -117,8 +122,10 @@ class MediaValidator extends Validator
         $files = $request->get_file_params();
         $file = oml_validate_image($files, false);
 
-        if ($file[0] && $file[1] !== null) {
-            $media->path = $this->service->upload($file);
+        if ($file[0]) {
+            if (count($errors) === 0 && $file[1] !== null) {
+                $media->path = $this->service->upload($file[1]);
+            }
         } else {
             $errors["file"] = $file[1];
         }
@@ -143,7 +150,7 @@ class MediaValidator extends Validator
         # Pagination Size
         $size = $request->get_param("pageSize");
         $size = oml_validate_pagination_size($size);
-        self::apply($index, $errors, $options, "pageSize");
+        self::apply($size, $errors, $options, "pageSize");
 
         # Search
         $search = $request->get_param("search");

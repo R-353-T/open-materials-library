@@ -16,7 +16,7 @@ class MediaService extends Service
      *
      * @return string The relative path to the uploaded file
      */
-    public function upload($file): string
+    public function upload(array &$file): string
     {
         require_once ABSPATH . "wp-admin/includes/file.php";
 

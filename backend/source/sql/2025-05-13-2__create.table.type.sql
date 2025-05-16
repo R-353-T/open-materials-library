@@ -1,4 +1,4 @@
-create table oml_type (
+create table oml__type (
     `id` int(11) unsigned not null primary key,
     `name` varchar(255) not null,
     `column` varchar(255) not null,
@@ -6,5 +6,5 @@ create table oml_type (
     `inputId` int(11) unsigned not null,
 
     constraint `oml_type__name` unique (`name`),
-    constraint `oml_type__inputId` foreign key (`inputId`) references `oml_type_input`(`id`) on delete cascade
+    constraint `oml_type__inputId` foreign key (`inputId`) references `oml__type_input`(`id`) on delete cascade
 );

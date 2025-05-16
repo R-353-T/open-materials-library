@@ -1,4 +1,4 @@
-insert into `oml_type` (`id`, `name`, `column`, `inputId`) values
+insert into `oml__type` (`id`, `name`, `column`, `inputId`) values
 (1, "TYPE", "typeId", 4),
 (2, "LABEL", "text", 1),
 (3, "TEXT", "text", 2),

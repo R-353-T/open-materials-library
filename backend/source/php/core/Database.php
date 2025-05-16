@@ -61,9 +61,4 @@ class Database
             wp_die();
         }
     }
-
-    public function __construct()
-    {
-        self::initializeDatabase();
-    }
 }

@@ -56,29 +56,29 @@ defined("___CONNECTION_STRING___") or define(
 
 # Tables
 
-defined("___DB_MIGRATION___") or define("___DB_MIGRATION___", "oml_migration");
+defined("___DB_MIGRATION___") or define("___DB_MIGRATION___", "oml__migration");
 
-defined("___DB_MEDIA___") or define("___DB_MEDIA___", "oml_media");
+defined("___DB_MEDIA___") or define("___DB_MEDIA___", "oml__media");
 
-defined("___DB_QUANTITY___") or define("___DB_QUANTITY___", "oml_quantity");
+defined("___DB_QUANTITY___") or define("___DB_QUANTITY___", "oml__quantity");
 
-defined("___DB_QUANTITY_ITEM___") or define("___DB_QUANTITY_ITEM___", "oml_quantity_item");
+defined("___DB_QUANTITY_ITEM___") or define("___DB_QUANTITY_ITEM___", "oml__quantity_item");
 
-defined("___DB_TYPE___") or define("___DB_TYPE___", "oml_type");
+defined("___DB_TYPE___") or define("___DB_TYPE___", "oml__type");
 
-defined("___DB_TYPE_INPUT___") or define("___DB_TYPE_INPUT___", "oml_type_input");
+defined("___DB_TYPE_INPUT___") or define("___DB_TYPE_INPUT___", "oml__type_input");
 
-defined("___DB_ENUMERATOR___") or define("___DB_ENUMERATOR___", "oml_enumerator");
+defined("___DB_ENUMERATOR___") or define("___DB_ENUMERATOR___", "oml__enumerator");
 
-defined("___DB_ENUMERATOR_ITEM___") or define("___DB_ENUMERATOR_ITEM___", "oml_enumerator_item");
+defined("___DB_ENUMERATOR_ITEM___") or define("___DB_ENUMERATOR_ITEM___", "oml__enumerator_item");
 
-defined("___DB_SET_GROUP___") or define("___DB_SET_GROUP___", "oml_group");
+defined("___DB_SET_GROUP___") or define("___DB_SET_GROUP___", "oml__group");
 
-defined("___DB_SET_FIELD___") or define("___DB_SET_FIELD___", "oml_field");
+defined("___DB_SET_FIELD___") or define("___DB_SET_FIELD___", "oml__field");
 
-defined("___DB_DATASHEET___") or define("___DB_DATASHEET___", "oml_datasheet");
+defined("___DB_DATASHEET___") or define("___DB_DATASHEET___", "oml__datasheet");
 
-defined("___DB_DATASHEET_ITEM___") or define("___DB_DATASHEET_ITEM___", "oml_datasheet_item");
+defined("___DB_DATASHEET_ITEM___") or define("___DB_DATASHEET_ITEM___", "oml__datasheet_item");
 
 # Constants
 # ----------------------------------------
