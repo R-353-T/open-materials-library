@@ -10,6 +10,7 @@ use oml\php\dal\SelectByName;
 use oml\php\error\InternalError;
 use PDO;
 use Throwable;
+use WP_Error;
 
 class MediaRepository extends Repository
 {
@@ -17,10 +18,13 @@ class MediaRepository extends Repository
 
     public function __construct()
     {
-        parent::__construct(OML_SQL_MEDIA_TABLENAME, MediaModel::class);
+        parent::__construct(___DB_MEDIA___, MediaModel::class);
     }
 
-    public function insert(mixed $model)
+    /**
+     * @param MediaModel $model
+     */
+    public function insert(mixed $model): int|WP_Error
     {
         try {
             Database::$PDO->beginTransaction();
@@ -40,7 +44,10 @@ class MediaRepository extends Repository
         }
     }
 
-    public function update(mixed $model)
+    /**
+     * @param MediaModel $model
+     */
+    public function update(mixed $model): int|WP_Error
     {
         try {
             Database::$PDO->beginTransaction();

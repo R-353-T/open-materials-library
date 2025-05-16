@@ -5,8 +5,8 @@ namespace oml\api;
 use oml\api\schema\MediaSchema;
 use oml\api\validator\MediaValidator;
 use oml\php\abstract\Service;
-use oml\php\enum\ControllerHttpMethod;
-use oml\php\enum\ControllerPermission;
+use oml\php\enum\APIMethod;
+use oml\php\enum\APIPermission;
 
 class Router extends Service
 {
@@ -22,30 +22,30 @@ class Router extends Service
                     "endpoints" => [
                         [
                             "callback"      => "create",
-                            "http_method"   => ControllerHttpMethod::POST,
-                            "permission"    => ControllerPermission::EDITOR
+                            "http_method"   => APIMethod::POST,
+                            "permission"    => APIPermission::EDITOR
                         ],
                         [
                             "callback"      => "get",
-                            "http_method"   => ControllerHttpMethod::GET,
-                            "permission"    => ControllerPermission::SUBSCRIBER,
+                            "http_method"   => APIMethod::GET,
+                            "permission"    => APIPermission::SUBSCRIBER,
                         ],
                         [
                             "callback"      => "delete",
-                            "http_method"   => ControllerHttpMethod::DELETE,
-                            "permission"    => ControllerPermission::EDITOR,
+                            "http_method"   => APIMethod::DELETE,
+                            "permission"    => APIPermission::EDITOR,
                         ],
                         [
                             "endpoint"      => "/list",
                             "callback"      => "list",
-                            "http_method"   => ControllerHttpMethod::GET,
-                            "permission"    => ControllerPermission::SUBSCRIBER
+                            "http_method"   => APIMethod::GET,
+                            "permission"    => APIPermission::SUBSCRIBER
                         ],
                         [
                             "endpoint"      => "/update",
                             "callback"      => "update",
-                            "http_method"   => ControllerHttpMethod::POST,
-                            "permission"    => ControllerPermission::EDITOR
+                            "http_method"   => APIMethod::POST,
+                            "permission"    => APIPermission::EDITOR
                         ]
                     ]
                 ]
@@ -66,7 +66,7 @@ class Router extends Service
                 $endpointUrl = isset($endpoint["endpoint"]) ? $endpoint["endpoint"] : "";
 
                 register_rest_route(
-                    OML_NAMESPACE,
+                    ___NAMESPACE___,
                     "/{$routeNamespace}{$endpointUrl}",
                     [
                         "callback"              => [$routeValidator, $endpoint["callback"]],
@@ -76,7 +76,7 @@ class Router extends Service
                 );
 
                 register_rest_route(
-                    OML_NAMESPACE,
+                    ___NAMESPACE___,
                     "/{$routeNamespace}{$endpointUrl}/schema",
                     [
                         "callback"              => [$routeSchema, $endpoint["callback"]],

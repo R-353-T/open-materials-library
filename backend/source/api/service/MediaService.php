@@ -9,12 +9,6 @@ use WP_Error;
 
 class MediaService extends Service
 {
-    private static array $MIME_LIST = [
-        "png"   => "image/png",
-        "jpg"   => "image/jpeg",
-        "jpeg"  => "image/jpeg",
-    ];
-
     /**
      * Upload a file and return its relative path
      *
@@ -48,7 +42,7 @@ class MediaService extends Service
         try {
             return unlink(ABSPATH . $relative);
         } catch (Throwable $error) {
-            return new InternalError(500, $error->getMessage(), $error->getTraceAsString());
+            return new InternalError($error->getMessage(), $error->getTraceAsString());
         }
     }
 }

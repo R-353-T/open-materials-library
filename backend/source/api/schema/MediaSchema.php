@@ -17,6 +17,10 @@ class MediaSchema extends Service
             "description" => [
                 "required" => true,
                 "type" => Type::TEXT
+            ],
+            "file" => [
+                "required" => true,
+                "type" => Type::IMAGE
             ]
         ];
     }
@@ -67,5 +71,9 @@ class MediaSchema extends Service
             "required" => true,
             "type" => Type::NUMBER
         ];
+
+        $schema["file"]["required"] = false;
+
+        return $schema;
     }
 }

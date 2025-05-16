@@ -6,15 +6,15 @@ use PDOStatement;
 
 class SqlSelectOptions
 {
-    public ?int $indexPage;
+    public ?int $pageIndex;
     public ?int $pageSize;
 
     private array $whereList = [];
     private array $orderByList = [];
 
-    public function __construct(int|null $indexPage = null, int|null $pageSize = null)
+    public function __construct(int|null $pageIndex = null, int|null $pageSize = null)
     {
-        $this->indexPage = $indexPage;
+        $this->pageIndex = $pageIndex;
         $this->pageSize = $pageSize;
     }
 
@@ -108,8 +108,8 @@ class SqlSelectOptions
 
     public function getLimitAndOffset(): string
     {
-        if ($this->indexPage !== null && $this->pageSize !== null) {
-            $offset = $this->pageSize * ($this->indexPage - 1);
+        if ($this->pageIndex !== null && $this->pageSize !== null) {
+            $offset = $this->pageSize * ($this->pageIndex - 1);
             return "LIMIT {$this->pageSize} OFFSET {$offset}";
         } else {
             return "";
