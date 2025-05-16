@@ -5,15 +5,12 @@ namespace oml\api\controller;
 use oml\api\model\MediaModel;
 use oml\php\enum\ControllerParamErrorCode as ERRC;
 use oml\api\repository\MediaRepository;
-use oml\api\schema\MediaSchema;
 use oml\api\service\MediaService;
 use oml\api\validator\MediaValidator;
 use oml\php\abstract\Controller;
 use oml\php\core\OkResponse;
 use oml\php\core\PageResponse;
 use oml\php\core\SqlSelectOptions;
-use oml\php\enum\ControllerHttpMethod;
-use oml\php\enum\ControllerPermission;
 use oml\php\error\BadRequestError;
 use oml\php\error\NotFoundError;
 use PDO;
@@ -21,46 +18,6 @@ use WP_REST_Request;
 
 class MediaController extends Controller
 {
-    protected string $endpoint = "media";
-    protected array $routeList = [
-        [
-            "endpoint"      => "",
-            "callback"      => "get",
-            "http_method"   => ControllerHttpMethod::GET,
-            "permission"    => ControllerPermission::SUBSCRIBER,
-            "schema"        => "get"
-        ],
-        [
-            "endpoint"      => "",
-            "callback"      => "delete",
-            "http_method"   => ControllerHttpMethod::DELETE,
-            "permission"    => ControllerPermission::EDITOR,
-            "schema"        => "delete"
-        ],
-        [
-            "endpoint"      => "/create",
-            "callback"      => "create",
-            "http_method"   => ControllerHttpMethod::POST,
-            "permission"    => ControllerPermission::EDITOR,
-            "schema"        => "create"
-        ],
-        [
-            "endpoint"      => "/update",
-            "callback"      => "update",
-            "http_method"   => ControllerHttpMethod::POST,
-            "permission"    => ControllerPermission::EDITOR,
-            "schema"        => "update"
-        ],
-        [
-            "endpoint"      => "/list",
-            "callback"      => "list",
-            "http_method"   => ControllerHttpMethod::GET,
-            "permission"    => ControllerPermission::SUBSCRIBER,
-            "schema"        => "list"
-        ]
-    ];
-
-    public readonly MediaSchema $schema;
     private readonly MediaRepository $repository;
     private readonly MediaService $service;
     private readonly MediaValidator $validator;
@@ -69,7 +26,6 @@ class MediaController extends Controller
     {
         parent::__construct();
         $this->repository = MediaRepository::inject();
-        $this->schema = MediaSchema::inject();
         $this->service = MediaService::inject();
         $this->validator = MediaValidator::inject();
     }
@@ -104,21 +60,21 @@ class MediaController extends Controller
             return $error;
         }
 
-        return new OkResponse($model);
-    }
-
-    public function delete(WP_REST_Request $request)
-    {
-        $id = $request->get_param("id");
-        $deleted = $this->repository->deleteById($id);
-        return new OkResponse($deleted);
+        return $this->OK($model);
     }
 
     public function get(WP_REST_Request $request)
     {
         $id = $request->get_param("id");
         $model = $this->repository->selectById($id);
-        return new OkResponse($model);
+        return $this->OK($model);
+    }
+
+    public function delete(WP_REST_Request $request)
+    {
+        $id = $request->get_param("id");
+        $deleted = $this->repository->deleteById($id);
+        return $this->OK($deleted);
     }
 
     public function update(WP_REST_Request $request)
@@ -156,7 +112,7 @@ class MediaController extends Controller
             $this->service->delete($oldFilePath);
         }
 
-        return new OkResponse($model);
+        return $this->OK($model);
     }
 
     public function list(WP_REST_Request $request)

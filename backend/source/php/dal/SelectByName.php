@@ -8,10 +8,7 @@ use PDO;
 
 trait SelectByName
 {
-    /**
-     * @return false|object
-     */
-    public function selectByName(string $name)
+    public function selectByName(string $name): false|object
     {
         $statement = Database::$PDO->prepare(SqlQueries::selectByName($this->table));
         $statement->bindValue(":name", $name, PDO::PARAM_STR);

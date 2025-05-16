@@ -9,11 +9,6 @@ use oml\api\Router;
 use oml\php\abstract\Middleware;
 use oml\php\core\Database;
 
-# Database
-
-Database::initializeDatabase();
-$router = Router::inject();
-
 # Middlewares
 
 Middleware::$middlewareList = [
@@ -33,4 +28,4 @@ add_filter("rest_pre_dispatch", [ Middleware::class, "requestFilter" ], 10, 3);
 # Hooks
 
 add_action("after_switch_theme", [ Database::class, "upgradeDatabase" ]);
-add_action("rest_api_init", [ $router, "loadRoutes" ]);
+add_action("rest_api_init", [ Router::inject(), "loadRoutes" ]);

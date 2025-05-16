@@ -2,17 +2,21 @@
 
 namespace oml\php\error;
 
-use oml\php\enum\ControllerErrorCode;
+use oml\api\enum\APIError;
 use WP_Error;
 
 class NotFoundError extends WP_Error
 {
-    public function __construct()
+    public function __construct(?array $data = null)
     {
         parent::__construct(
-            ControllerErrorCode::NOT_FOUND,
-            "Not found",
-            ["status" => 404]
+            APIError::NOT_FOUND,
+            APIError::NOT_FOUND_MESSAGE,
+            [
+                ___API_STATUS_KEY___ => APIError::NOT_FOUND_STATUS,
+                ___API_ERROR_KEY___ => APIError::NOT_IMPLEMENTED,
+                ___API_DATA_KEY___ => $data
+            ]
         );
     }
 }

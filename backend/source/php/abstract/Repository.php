@@ -23,39 +23,17 @@ abstract class Repository extends Service
         $this->cache = new HashMap();
     }
 
-    /**
-     * Insert a model into the database table
-     *
-     * @param mixed $model The model to be inserted
-     *
-     * @return int|WP_Error
-     */
-    public function insert(mixed $model)
+    public function insert(mixed $model): int|WP_Error
     {
         return new NotImplementedError();
     }
 
-    /**
-     * Update a model in the database table
-     *
-     * @param mixed $model The model to be updated
-     *
-     * @return int|WP_Error
-     */
-    public function update(mixed $model)
+    public function update(mixed $model): int|WP_Error
     {
         return new NotImplementedError();
     }
 
-    /**
-     * Select a model from the database table by its ID
-     *
-     * @param int $id The ID of the model to be selected
-     * @param bool $cache Whether to use the cache or not
-     *
-     * @return false|object The selected model if successful, null otherwise
-     */
-    public function selectById(int $id, bool $cache = true)
+    public function selectById(int $id, bool $cache = true): false|object
     {
         $model = false;
 
@@ -73,14 +51,7 @@ abstract class Repository extends Service
         return $model;
     }
 
-    /**
-     * Delete a model from the database table by its ID
-     *
-     * @param int $id The ID of the model to be deleted
-     *
-     * @return bool Whether the deletion was successful or not
-     */
-    public function deleteById(int $id)
+    public function deleteById(int $id): false|int
     {
         $statement = Database::$PDO->prepare(SqlQueries::deleteById($this->table));
         $statement->bindValue(":id", $id, PDO::PARAM_INT);
@@ -94,14 +65,7 @@ abstract class Repository extends Service
         return $deleted;
     }
 
-    /**
-     * Select all models from the database table using the given select options
-     *
-     * @param SqlSelectOptions $options The select options to use for the query
-     *
-     * @return array The array of selected models
-     */
-    public function selectAll(SqlSelectOptions $options = new SqlSelectOptions())
+    public function selectAll(SqlSelectOptions $options = new SqlSelectOptions()): array
     {
         $statement = Database::$PDO->prepare(SqlQueries::selectAll($this->table, $options));
         $options->applyWhereBinds($statement);
@@ -115,14 +79,7 @@ abstract class Repository extends Service
         return $modelList;
     }
 
-    /**
-     * Count of all models from the database table using the given select options
-     *
-     * @param SqlSelectOptions $options The select options to use for the query
-     *
-     * @return int The count of all selected models
-     */
-    public function countAll(SqlSelectOptions $options = new SqlSelectOptions())
+    public function countAll(SqlSelectOptions $options = new SqlSelectOptions()): int
     {
         $statement = Database::$PDO->prepare(SqlQueries::countAll($this->table, $options));
         $options->applyWhereBinds($statement);
@@ -130,14 +87,7 @@ abstract class Repository extends Service
         return $statement->fetchColumn();
     }
 
-    /**
-     * Get the final page from the database table using the given select options
-     *
-     * @param SqlSelectOptions $options The select options to use for the query
-     *
-     * @return int The final page of all selected models
-     */
-    public function finalPage(SqlSelectOptions $options = new SqlSelectOptions())
+    public function finalPage(SqlSelectOptions $options = new SqlSelectOptions()): int
     {
         $count = $this->countAll($options);
         if ($count === 0) {

@@ -2,8 +2,8 @@
 
 namespace oml\api;
 
-use oml\api\controller\MediaController;
 use oml\api\schema\MediaSchema;
+use oml\api\validator\MediaValidator;
 use oml\php\abstract\Service;
 use oml\php\enum\ControllerHttpMethod;
 use oml\php\enum\ControllerPermission;
@@ -17,8 +17,8 @@ class Router extends Service
 
             "media" => [
                 [
-                    "controller" => MediaController::inject(),
                     "schema" => MediaSchema::inject(),
+                    "validator" => MediaValidator::inject(),
                     "endpoints" => [
                         [
                             "callback"      => "create",
@@ -59,7 +59,7 @@ class Router extends Service
 
         foreach ($routes as $routeNamespace => $routeOptions) {
             $routeEndpoints = $routeOptions["endpoints"];
-            $routeController = $routeOptions["controller"];
+            $routeValidator = $routeOptions["validator"];
             $routeSchema = $routeOptions["schema"];
 
             foreach ($routeEndpoints as $endpoint) {
@@ -69,7 +69,7 @@ class Router extends Service
                     OML_NAMESPACE,
                     "/{$routeNamespace}{$endpointUrl}",
                     [
-                        "callback"              => [$routeController, $endpoint["callback"]],
+                        "callback"              => [$routeValidator, $endpoint["callback"]],
                         "methods"               => $endpoint["http_method"],
                         "permission_callback"   => $endpoint["permission"]
                     ]

@@ -2,54 +2,42 @@
 
 namespace oml\api\middleware;
 
-use oml\php\enum\ControllerErrorCode;
+use oml\api\enum\APIError;
 use oml\php\abstract\Middleware;
-use oml\php\error\LoginLimitExceededError;
+use oml\php\error\TooManyRequestsError;
 use WP_HTTP_Response;
 use WP_REST_Server;
 use WP_REST_Request;
 
 class AuthLimitMiddleware extends Middleware
 {
-    /**
-     * Checks if the user has been jailed due to too many login attempts
-     *
-     * @param mixed $response The wordpress response
-     * @param WP_REST_Server $server The server rest api server
-     * @param WP_REST_Request $request The wordpress request
-     *
-     * @return mixed The response
-     */
-    public function request(mixed $response, WP_REST_Server $server, WP_REST_Request $request)
-    {
+    public function request(
+        mixed $response,
+        WP_REST_Server $server,
+        WP_REST_Request $request
+    ): mixed {
         if (
             $response === null
-            && $request->get_route() === OML_AUTH_LOGIN_ENDPOINT
+            && $request->get_route() === ___AUTH_TOKEN_ENDPOINT___
             && $request->get_method() !== "OPTIONS"
         ) {
             $userInfo = $this->updateUserInfo();
 
             if ($userInfo["jailed"]) {
-                $response = new LoginLimitExceededError();
+                $response = new TooManyRequestsError();
             }
         }
 
         return $response;
     }
 
-    /**
-     * This middleware is used to limit the number of login attempts to the API
-     *
-     * @param WP_HTTP_Response $response The wordpress response
-     * @param WP_REST_Server $server The server rest api server
-     * @param WP_REST_Request $request The wordpress request
-     *
-     * @return WP_HTTP_Response The response
-     */
-    public function response(WP_HTTP_Response $response, WP_REST_Server $server, WP_REST_Request $request)
-    {
+    public function response(
+        WP_HTTP_Response $response,
+        WP_REST_Server $server,
+        WP_REST_Request $request
+    ): WP_HTTP_Response {
         if (
-            $request->get_route() === OML_AUTH_LOGIN_ENDPOINT
+            $request->get_route() === ___AUTH_TOKEN_ENDPOINT___
             && $request->get_method() !== "OPTIONS"
         ) {
             $data = $response->get_data();
@@ -62,14 +50,13 @@ class AuthLimitMiddleware extends Middleware
                 $this->deleteUserInfo();
             } elseif ($status === 429 || $status === 403) {
                 if ($data["data"]["jailed"] === true) {
-                    $response->header("Retry-After", OML_API_JAIL_TIME);
+                    $response->header("Retry-After", ___JAIL_TIME___);
                 }
 
-                $response->header("X-RateLimit-Limit", OML_API_LOGIN_ATTEMPT_LIMIT);
-                $response->header("X-RateLimit-Remaining", OML_API_LOGIN_ATTEMPT_LIMIT - $userInfo["attemps"]);
-                $data[OML_API_ERRCODE] = ControllerErrorCode::FORBIDDEN;
-                unset($data["message"]);
-                unset($data["status"]);
+                $response->header("X-RateLimit-Limit", ___AUTH_ATTEMPT_LIMIT___);
+                $response->header("X-RateLimit-Remaining", ___AUTH_ATTEMPT_LIMIT___ - $userInfo["attemps"]);
+                $data[___API_ERROR_KEY___] = APIError::FORBIDDEN;
+                $data["message"] = APIError::FORBIDDEN_MESSAGE;
             }
 
             $response->set_data($data);
@@ -99,7 +86,7 @@ class AuthLimitMiddleware extends Middleware
 
         if ($userInfo === false) {
             $userInfo = ["attemps" => 0, "jailed" => false];
-            set_transient($this->getTransientName(), $userInfo, OML_API_JAIL_TIME);
+            set_transient($this->getTransientName(), $userInfo, ___JAIL_TIME___);
         }
 
         return $userInfo;
@@ -122,13 +109,13 @@ class AuthLimitMiddleware extends Middleware
     {
         $userInfo = $this->getUserInfo();
         $userInfo["attemps"]++;
-        $userInfo["jailed"] = $userInfo["attemps"] > OML_API_LOGIN_ATTEMPT_LIMIT;
+        $userInfo["jailed"] = $userInfo["attemps"] > ___AUTH_ATTEMPT_LIMIT___;
 
         if ($userInfo["jailed"]) {
-            $userInfo["attemps"] = OML_API_LOGIN_ATTEMPT_LIMIT;
+            $userInfo["attemps"] = ___AUTH_ATTEMPT_LIMIT___;
         }
 
-        set_transient($this->getTransientName(), $userInfo, OML_API_JAIL_TIME);
+        set_transient($this->getTransientName(), $userInfo, ___JAIL_TIME___);
         return $userInfo;
     }
 }

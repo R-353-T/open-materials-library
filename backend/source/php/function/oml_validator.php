@@ -1,19 +1,25 @@
 <?php
 
-function oml_validate_database_index(mixed $value)
-{
-    if ($value === null) {
-        return false;
-    }
+namespace oml\php\function;
 
-    return filter_var(
+use oml\php\abstract\Repository;
+
+function oml_validate_database_index(mixed $value, Repository $repository)
+{
+    $isUnsignedInt = filter_var(
         $value,
         FILTER_VALIDATE_INT,
-        ["options" => ["min_range" => 1]]
-    ) !== false;
+        [
+            "options" => ["min_range" => 1]
+        ]
+    );
+
+    return $isUnsignedInt !== false
+        && $repository->selectById($value) === false;
 }
 
-function oml_validate_array(mixed $value)
+function oml_validate_empty_string(mixed $value): bool
 {
-    return is_array($value);
+    return $value !== null
+    && $value === "";
 }

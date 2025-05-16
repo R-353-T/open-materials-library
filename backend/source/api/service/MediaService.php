@@ -9,6 +9,12 @@ use WP_Error;
 
 class MediaService extends Service
 {
+    private static array $MIME_LIST = [
+        "png"   => "image/png",
+        "jpg"   => "image/jpeg",
+        "jpeg"  => "image/jpeg",
+    ];
+
     /**
      * Upload a file and return its relative path
      *
@@ -37,7 +43,7 @@ class MediaService extends Service
      *
      * @return bool|WP_Error Whether the file was deleted successfully
      */
-    public function delete(string $relative)
+    public function delete(string $relative): bool|WP_Error
     {
         try {
             return unlink(ABSPATH . $relative);

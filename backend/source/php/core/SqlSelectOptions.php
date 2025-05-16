@@ -54,7 +54,7 @@ class SqlSelectOptions
                         "operator" => $operator
                     ] = $where;
 
-                    $buffer .= "{$column} {$operator} :" . OML_SQL_UNIQUE_PARAM_PREFIX . "_{$index}";
+                    $buffer .= "{$column} {$operator} :" . ___UNIQUE_SYMBOL___ . "_{$index}";
                 }
 
                 if (count($where) === 3) {
@@ -70,7 +70,7 @@ class SqlSelectOptions
     {
         foreach ($this->whereList as $index => $where) {
             if (count($where) === 5) {
-                $statement->bindValue(OML_SQL_UNIQUE_PARAM_PREFIX . "_{$index}", ...$where["bind"]);
+                $statement->bindValue(___UNIQUE_SYMBOL___ . "_{$index}", ...$where["bind"]);
             }
 
             if (count($where) === 3) {

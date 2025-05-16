@@ -7,7 +7,7 @@
  */
 function oml_jwt_expiration_time_filter()
 {
-    return OML_AUTH_EXPIRATION_TIME;
+    return ___AUTH_EXPIRATION_TIME___;
 }
 
 /**
@@ -38,7 +38,10 @@ function oml_expose_cors_headers_filter(array $headers, WP_REST_Request $request
  */
 function oml_wp_block_original_endpoints_filter(array $endpointList)
 {
-    $namespaceList = [OML_AUTH_ENDPOINT, OML_NAMESPACE];
+    $namespaceList = [
+        ___AUTH_ENDPOINT___,
+        ___NAMESPACE___
+    ];
 
     if (is_user_logged_in() === false) {
         foreach (array_keys($endpointList) as $endpoint) {

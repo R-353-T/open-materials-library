@@ -4,7 +4,7 @@ namespace oml\php\enum;
 
 use oml\php\error\ForbiddenError;
 
-class ControllerPermission
+class APIPermission
 {
     public const ALL = "__return_true";
     public const SUBSCRIBER = [self::class, "isSubscriber"];
