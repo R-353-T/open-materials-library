@@ -1,9 +1,8 @@
 <?php
 
 use oml\php\enum\APIError;
-use oml\php\abstract\Repository;
 
-function oml_validate_database_index(mixed $value, ?Repository $repository = null): array
+function oml_validate_database_index(mixed $value, ?object $repository = null): array
 {
     $isUnsignedInt = filter_var(
         $value,
@@ -153,4 +152,40 @@ function oml_validate_pagination_size(mixed $value): array
     }
 
     return [true, (int) $value];
+}
+
+function oml_validate_array(mixed $value): array
+{
+    if (is_array($value) === false) {
+        return [false, APIError::PARAMETER_INVALID];
+    }
+
+    return [true, $value];
+}
+
+function oml_validate_label(mixed $value, bool $not_empty = true, bool $required = true): array
+{
+    if ($value === null) {
+        if ($required) {
+            return [false, APIError::PARAMETER_REQUIRED];
+        } else {
+            return [true, null];
+        }
+    }
+
+    if (is_string($value) === false) {
+        return [false, APIError::PARAMETER_INVALID];
+    }
+
+    $value = trim($value);
+
+    if (mb_strlen($value) > ___MAX_LABEL_LENGTH___) {
+        return [false, APIError::PARAMATER_STRING_TOO_LONG];
+    }
+
+    if (mb_strlen($value) === 0 && $not_empty) {
+        return [false, APIError::PARAMETER_STRING_EMPTY];
+    }
+
+    return [true, $value];
 }

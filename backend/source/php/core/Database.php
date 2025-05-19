@@ -22,14 +22,14 @@ class Database
     public static function upgradeDatabase()
     {
         self::initializeDatabase();
-        $migrationList = self::selectMigrations();
+        $migration_list = self::selectMigrations();
         $files = scandir(___SQL_DIRECTORY___);
 
         foreach ($files as $file) {
-            $fileInfo = pathinfo($file);
-            if (!in_array($fileInfo['filename'], $migrationList, true)) {
-                if (strtolower($fileInfo['extension']) === 'sql') {
-                    self::applyMigration($fileInfo['filename']);
+            $file_info = pathinfo($file);
+            if (!in_array($file_info['filename'], $migration_list, true)) {
+                if (strtolower($file_info['extension']) === 'sql') {
+                    self::applyMigration($file_info['filename']);
                 }
             }
         }
@@ -45,18 +45,18 @@ class Database
         }
     }
 
-    private static function applyMigration(string $filename)
+    private static function applyMigration(string $file_name)
     {
-        $sqlMigration = file_get_contents(___SQL_DIRECTORY___ . DIRECTORY_SEPARATOR . $filename . ".sql");
+        $sql_migration = file_get_contents(___SQL_DIRECTORY___ . DIRECTORY_SEPARATOR . $file_name . ".sql");
 
         try {
-            self::$PDO->query($sqlMigration);
+            self::$PDO->query($sql_migration);
             $statement = self::$PDO->prepare(self::$INSERT);
-            $statement->bindValue(':name', $filename);
+            $statement->bindValue(':name', $file_name);
             $statement->execute();
         } catch (Throwable $exception) {
-            echo "<b>{$filename}</b><br>"
-                . "<pre>{$sqlMigration}</pre><br>"
+            echo "<b>{$file_name}</b><br>"
+                . "<pre>{$sql_migration}</pre><br>"
                 . "<pre>{$exception->getMessage()}</pre><br>";
             wp_die();
         }

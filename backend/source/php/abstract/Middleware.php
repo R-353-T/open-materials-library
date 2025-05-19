@@ -8,7 +8,7 @@ use WP_REST_Server;
 
 abstract class Middleware extends Service
 {
-    public static $middlewareList = [];
+    public static $MIDDLEWARE_LIST = [];
 
     public static function requestFilter(
         mixed $response,
@@ -16,7 +16,7 @@ abstract class Middleware extends Service
         WP_REST_Request $request
     ): mixed {
         if (oml_wp_original_request($request) === false) {
-            foreach (self::$middlewareList as $middleware) {
+            foreach (self::$MIDDLEWARE_LIST as $middleware) {
                 $instance = call_user_func(array($middleware, "inject"));
                 $response = $instance->request($response, $server, $request);
             }
@@ -31,8 +31,8 @@ abstract class Middleware extends Service
         WP_REST_Request $request
     ): WP_HTTP_Response {
         if (oml_wp_original_request($request) === false) {
-            $middlewareReversedList = array_reverse(self::$middlewareList);
-            foreach ($middlewareReversedList as $middleware) {
+            $reversed_middleware_list = array_reverse(self::$MIDDLEWARE_LIST);
+            foreach ($reversed_middleware_list as $middleware) {
                 $instance = call_user_func(array($middleware, "inject"));
                 $response = $instance->response($response, $server, $request);
             }

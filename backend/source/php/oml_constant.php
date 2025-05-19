@@ -91,6 +91,8 @@ defined("___API_STATUS_KEY___") or define("___API_STATUS_KEY___", "status");
 
 defined("___API_DATA_KEY___") or define("___API_DATA_KEY___", "data");
 
+defined("___MAX_ITEM_PER_RELATION___") or define("___MAX_ITEM_PER_RELATION___", 512);
+
 # Validation
 # ----------------------------------------
 

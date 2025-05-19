@@ -88,22 +88,22 @@ class SqlSelectOptions
 
     public function getOrderByQuery(): string
     {
-        $q = "";
-        $c = count($this->orderByList);
+        $query = "";
+        $count = count($this->orderByList);
 
-        if ($c > 0) {
-            $q = "ORDER BY ";
+        if ($count > 0) {
+            $query = "ORDER BY ";
 
             foreach ($this->orderByList as $i => $o) {
-                $q .= "{$o[0]} {$o[1]}";
+                $query .= "{$o[0]} {$o[1]}";
 
-                if ($i < $c - 1) {
-                    $q .= ", ";
+                if ($i < $count - 1) {
+                    $query .= ", ";
                 }
             }
         }
 
-        return $q;
+        return $query;
     }
 
     public function getLimitAndOffset(): string

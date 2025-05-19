@@ -3,9 +3,12 @@
 namespace oml\api\repository;
 
 use oml\api\model\MediaModel;
-use oml\api\sql\MediaSql;
 use oml\php\abstract\Repository;
 use oml\php\core\Database;
+use oml\php\dal\CountAll;
+use oml\php\dal\DeleteById;
+use oml\php\dal\SelectAll;
+use oml\php\dal\SelectById;
 use oml\php\dal\SelectByName;
 use oml\php\error\InternalError;
 use PDO;
@@ -14,7 +17,11 @@ use WP_Error;
 
 class MediaRepository extends Repository
 {
+    use SelectById;
+    use SelectAll;
     use SelectByName;
+    use DeleteById;
+    use CountAll;
 
     public function __construct()
     {
@@ -22,22 +29,35 @@ class MediaRepository extends Repository
     }
 
     /**
-     * @param MediaModel $model
+     * @param MediaModel $media
      */
-    public function insert(mixed $model): int|WP_Error
+    public function insert(mixed $media): int|WP_Error
     {
+        $statement = Database::$PDO->prepare(<<<SQL
+        INSERT INTO {$this->table}
+        (
+            `name`,
+            `description`,
+            `path`
+        )
+        VALUES 
+        (
+            :_name,
+            :_description,
+            :_path
+        )
+        SQL);
+
+        $statement->bindValue(":_name", $media->name, PDO::PARAM_STR);
+        $statement->bindValue(":_description", $media->description, PDO::PARAM_STR);
+        $statement->bindValue(":_path", $media->path, PDO::PARAM_STR);
+
         try {
             Database::$PDO->beginTransaction();
-            $query = MediaSql::insert($this->table);
-            $statement = Database::$PDO->prepare($query);
-            $statement->bindValue(":name", $model->name, PDO::PARAM_STR);
-            $statement->bindValue(":description", $model->description, PDO::PARAM_STR);
-            $statement->bindValue(":path", $model->path, PDO::PARAM_STR);
             $statement->execute();
-            $id = Database::$PDO->lastInsertId();
+            $media->id = Database::$PDO->lastInsertId();
             Database::$PDO->commit();
-            $model->id = $id;
-            return $id;
+            return $media->id;
         } catch (Throwable $error) {
             Database::$PDO->rollBack();
             return new InternalError($error->getMessage(), $error->getTraceAsString());
@@ -45,21 +65,29 @@ class MediaRepository extends Repository
     }
 
     /**
-     * @param MediaModel $model
+     * @param MediaModel $media
      */
-    public function update(mixed $model): int|WP_Error
+    public function update(mixed $media): int|WP_Error
     {
+        $statement = Database::$PDO->prepare(<<<SQL
+        UPDATE {$this->table}
+        SET
+            `name` = :_name,
+            `description` = :_description,
+            `path` = :_path
+        WHERE `id` = :id
+        SQL);
+
+        $statement->bindValue(":_name", $media->name, PDO::PARAM_STR);
+        $statement->bindValue(":_description", $media->description, PDO::PARAM_STR);
+        $statement->bindValue(":_path", $media->path, PDO::PARAM_STR);
+        $statement->bindValue(":id", $media->id, PDO::PARAM_INT);
+
         try {
             Database::$PDO->beginTransaction();
-            $query = MediaSql::update($this->table);
-            $statement = Database::$PDO->prepare($query);
-            $statement->bindValue(":name", $model->name, PDO::PARAM_STR);
-            $statement->bindValue(":description", $model->description, PDO::PARAM_STR);
-            $statement->bindValue(":path", $model->path, PDO::PARAM_STR);
-            $statement->bindValue(":id", $model->id, PDO::PARAM_INT);
             $statement->execute();
             Database::$PDO->commit();
-            return $model->id;
+            return $media->id;
         } catch (Throwable $error) {
             Database::$PDO->rollBack();
             return new InternalError($error->getMessage(), $error->getTraceAsString());

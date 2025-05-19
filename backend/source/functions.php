@@ -11,7 +11,7 @@ use oml\php\core\Database;
 
 # Middlewares
 
-Middleware::$middlewareList = [
+Middleware::$MIDDLEWARE_LIST = [
     AuthLimitMiddleware::class,
     BucketMiddleware::class,
 ];

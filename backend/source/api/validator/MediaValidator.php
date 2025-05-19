@@ -61,23 +61,6 @@ class MediaValidator extends Validator
         return $this->controller->create($media);
     }
 
-    public function get(WP_REST_Request $request)
-    {
-        $errors = [];
-        $media = new MediaModel();
-
-        # Id
-        $id = $request->get_param("id");
-        $id = oml_validate_database_index($id, $this->repository);
-        self::apply($id, $errors, $media, "id");
-
-        if (count($errors) > 0) {
-            return new BadRequestError($errors);
-        }
-
-        return $this->controller->get($media);
-    }
-
     public function delete(WP_REST_Request $request)
     {
         $errors = [];
@@ -93,6 +76,23 @@ class MediaValidator extends Validator
         }
 
         return $this->controller->delete($media);
+    }
+
+    public function get(WP_REST_Request $request)
+    {
+        $errors = [];
+        $media = new MediaModel();
+
+        # Id
+        $id = $request->get_param("id");
+        $id = oml_validate_database_index($id, $this->repository);
+        self::apply($id, $errors, $media, "id");
+
+        if (count($errors) > 0) {
+            return new BadRequestError($errors);
+        }
+
+        return $this->controller->get($media);
     }
 
     public function update(WP_REST_Request $request)

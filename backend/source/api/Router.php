@@ -3,7 +3,9 @@
 namespace oml\api;
 
 use oml\api\schema\MediaSchema;
+use oml\api\schema\QuantitySchema;
 use oml\api\validator\MediaValidator;
+use oml\api\validator\QuantityValidator;
 use oml\php\abstract\Service;
 use oml\php\enum\APIMethod;
 use oml\php\enum\APIPermission;
@@ -44,6 +46,41 @@ class Router extends Service
                         "endpoint"      => "/update",
                         "callback"      => "update",
                         "http_method"   => APIMethod::POST,
+                        "permission"    => APIPermission::EDITOR
+                    ]
+                ]
+            ],
+
+            // * QUANTITY *
+
+            "quantity" => [
+                "schema" => QuantitySchema::inject(),
+                "validator" => QuantityValidator::inject(),
+                "endpoints" => [
+                    [
+                        "callback"      => "create",
+                        "http_method"   => APIMethod::POST,
+                        "permission"    => APIPermission::EDITOR
+                    ],
+                    [
+                        "callback"      => "get",
+                        "http_method"   => APIMethod::GET,
+                        "permission"    => APIPermission::SUBSCRIBER,
+                    ],
+                    [
+                        "callback"      => "delete",
+                        "http_method"   => APIMethod::DELETE,
+                        "permission"    => APIPermission::EDITOR,
+                    ],
+                    [
+                        "endpoint"      => "/list",
+                        "callback"      => "list",
+                        "http_method"   => APIMethod::GET,
+                        "permission"    => APIPermission::SUBSCRIBER
+                    ],
+                    [
+                        "callback"      => "update",
+                        "http_method"   => APIMethod::PUT,
                         "permission"    => APIPermission::EDITOR
                     ]
                 ]

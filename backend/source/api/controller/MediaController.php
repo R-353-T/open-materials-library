@@ -6,6 +6,7 @@ use oml\api\model\MediaModel;
 use oml\api\repository\MediaRepository;
 use oml\api\service\MediaService;
 use oml\php\abstract\Controller;
+use oml\php\abstract\Repository;
 use oml\php\core\SqlSelectOptions;
 use oml\php\error\NotFoundError;
 
@@ -33,16 +34,16 @@ class MediaController extends Controller
         return $this->OK($media);
     }
 
-    public function get(MediaModel $media)
-    {
-        $model = $this->repository->selectById($media->id);
-        return $this->OK($model);
-    }
-
     public function delete(MediaModel $media)
     {
         $deleted = $this->repository->deleteById($media->id);
         return $this->OK($deleted);
+    }
+
+    public function get(MediaModel $media)
+    {
+        $media = $this->repository->selectById($media->id);
+        return $this->OK($media);
     }
 
     public function update(MediaModel $media)
@@ -65,9 +66,10 @@ class MediaController extends Controller
     public function list(SqlSelectOptions $options)
     {
         $options->orderBy("name", "ASC");
-        $finalPage = $this->repository->finalPage($options);
+        $count = $this->repository->countAll($options);
+        $final = Repository::getFinalPageCount($count, $options->pageSize);
 
-        if ($finalPage < $options->pageIndex) {
+        if ($final < $options->pageIndex) {
             return new NotFoundError();
         }
 
@@ -76,7 +78,7 @@ class MediaController extends Controller
             $items,
             $options->pageIndex,
             $options->pageSize,
-            $finalPage
+            $final
         );
     }
 }

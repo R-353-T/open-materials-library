@@ -5,17 +5,17 @@ namespace oml\php\dal;
 use oml\php\core\Database;
 use PDO;
 
-trait SelectByName
+trait SelectById
 {
-    public function selectByName(string $name): false | object
+    public function selectById(int $id): false|object
     {
         $statement = Database::$PDO->prepare(<<<SQL
         SELECT *
         FROM {$this->table}
-        WHERE `name` = :_name
+        WHERE `id` = :_id
         SQL);
 
-        $statement->bindValue(":_name", $name, PDO::PARAM_STR);
+        $statement->bindValue(":_id", $id, PDO::PARAM_INT);
         $statement->execute();
         $statement->setFetchMode(PDO::FETCH_CLASS, $this->model);
         return $statement->fetch();
