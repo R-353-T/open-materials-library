@@ -32,17 +32,26 @@ class MediaValidator extends Validator
         $errors = [];
         $media = new MediaModel();
 
-        # Name
+        // * ------------------------------------------ *
+        // * 1. Name                                    *
+        // * ------------------------------------------ *
+
         $name = $request->get_param("name");
         $name = oml_validate_name($name, $this->repository);
         self::apply($name, $errors, $media, "name");
 
-        # Description
+        // * ------------------------------------------ *
+        // * 2. Description                             *
+        // * ------------------------------------------ *
+
         $description = $request->get_param("description");
         $description = oml_validate_description($description);
         self::apply($description, $errors, $media, "description");
 
-        # File (image)
+        // * ------------------------------------------ *
+        // * 3. File (image)                            *
+        // * ------------------------------------------ *
+
         $files = $request->get_file_params();
         $file = oml_validate_image($files);
 
@@ -51,7 +60,10 @@ class MediaValidator extends Validator
                 $media->path = $this->service->upload($file[1]);
             }
         } else {
-            $errors["file"] = $file[1];
+            $errors[] = [
+                "parameter" => "file",
+                "error" => $file[1]
+            ];
         }
 
         if (count($errors) > 0) {
@@ -66,7 +78,10 @@ class MediaValidator extends Validator
         $errors = [];
         $media = new MediaModel();
 
-        # Id
+        // * ------------------------------------------ *
+        // * 1. Id                                      *
+        // * ------------------------------------------ *
+
         $id = $request->get_param("id");
         $id = oml_validate_database_index($id, $this->repository);
         self::apply($id, $errors, $media, "id");
@@ -83,7 +98,10 @@ class MediaValidator extends Validator
         $errors = [];
         $media = new MediaModel();
 
-        # Id
+        // * ------------------------------------------ *
+        // * 1. Id                                      *
+        // * ------------------------------------------ *
+
         $id = $request->get_param("id");
         $id = oml_validate_database_index($id, $this->repository);
         self::apply($id, $errors, $media, "id");
@@ -100,25 +118,37 @@ class MediaValidator extends Validator
         $errors = [];
         $media = new MediaModel();
 
-        # Id
+        // * ------------------------------------------ *
+        // * 1. Id                                      *
+        // * ------------------------------------------ *
+
         $id = $request->get_param("id");
         $id = oml_validate_database_index($id, $this->repository);
-        $hasId = self::apply($id, $errors, $media, "id");
+        self::apply($id, $errors, $media, "id");
         $media = $this->repository->selectById($media->id);
 
-        # Name
-        if ($hasId) {
+        // * ------------------------------------------ *
+        // * 2. Name                                    *
+        // * ------------------------------------------ *
+
+        if ($id[0]) {
             $name = $request->get_param("name");
             $name = oml_validate_name($name, $this->repository, $media->id);
             self::apply($name, $errors, $media, "name");
         }
 
-        # Description
+        // * ------------------------------------------ *
+        // * 3. Description                             *
+        // * ------------------------------------------ *
+
         $description = $request->get_param("description");
         $description = oml_validate_description($description);
         self::apply($description, $errors, $media, "description");
 
-        # File (image)
+        // * ------------------------------------------ *
+        // * 4. File (image)                            *
+        // * ------------------------------------------ *
+
         $files = $request->get_file_params();
         $file = oml_validate_image($files, false);
 
@@ -127,7 +157,10 @@ class MediaValidator extends Validator
                 $media->path = $this->service->upload($file[1]);
             }
         } else {
-            $errors["file"] = $file[1];
+            $errors[] = [
+                "parameter" => "file",
+                "error" => $file[1]
+            ];
         }
 
         if (count($errors) > 0) {
@@ -142,21 +175,38 @@ class MediaValidator extends Validator
         $errors = [];
         $options = new SqlSelectOptions();
 
-        # Pagination Index
+        // * ------------------------------------------ *
+        // * 1. Page index                              *
+        // * ------------------------------------------ *
+
         $index = $request->get_param("pageIndex");
         $index = oml_validate_pagination_index($index);
         self::apply($index, $errors, $options, "pageIndex");
 
-        # Pagination Size
+        // * ------------------------------------------ *
+        // * 2. Page size                               *
+        // * ------------------------------------------ *
+
         $size = $request->get_param("pageSize");
         $size = oml_validate_pagination_size($size);
         self::apply($size, $errors, $options, "pageSize");
 
-        # Search
+        // * ------------------------------------------ *
+        // * 2. Search                                  *
+        // * ------------------------------------------ *
+
         $search = $request->get_param("search");
         if ($search !== null) {
             if (is_string($search) === false) {
-                $errors["search"] = APIError::PARAMETER_INVALID;
+                $errors[] = [
+                    "parameter" => "search",
+                    APIError::PARAMETER_INVALID
+                ];
+            } elseif (strlen($search) > ___MAX_LABEL_LENGTH___) {
+                $errors[] = [
+                    "parameter" => "search",
+                    APIError::PARAMATER_STRING_TOO_LONG
+                ];
             } else {
                 $options->where(
                     [

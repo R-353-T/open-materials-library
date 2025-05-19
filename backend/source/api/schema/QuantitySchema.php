@@ -2,44 +2,29 @@
 
 namespace oml\api\schema;
 
-use oml\api\validator\QuantityValidator;
+use oml\api\enum\Type;
 use oml\php\abstract\Service;
 
 class QuantitySchema extends Service
 {
-    private readonly QuantityValidator $validator;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->validator = QuantityValidator::inject();
-    }
-
     public function create()
     {
         return [
             "name" => [
                 "required" => true,
-                "type" => "string",
-                "validate_callback" => [$this->validator, "validateName"]
+                "type" => Type::LABEL
             ],
             "description" => [
                 "required" => true,
-                "type" => "string",
-                "maxLength" => OML_API_MAX_DESCRIPTION_LENGTH
+                "type" => Type::TEXT
             ],
             "items" => [
                 "required" => true,
                 "type" => "array",
-                "validate_callback" => [$this->validator, "validateItems"],
-                "items" => [
-                    "type" => "object",
-                    "additionalProperties" => false,
-                    "properties" => [
-                        "value" => [
-                            "required" => true,
-                            "type" => "string"
-                        ]
+                "item" => [
+                    "value" => [
+                        "required" => true,
+                        "type" => Type::LABEL
                     ]
                 ]
             ]
@@ -51,8 +36,7 @@ class QuantitySchema extends Service
         return [
             "id"    => [
                 "required" => true,
-                "type" => "integer",
-                "validate_callback" => [$this->validator, "validateId"],
+                "type" => Type::NUMBER
             ]
         ];
     }
@@ -62,8 +46,7 @@ class QuantitySchema extends Service
         return [
             "id"    => [
                 "required" => true,
-                "type" => "integer",
-                "validate_callback" => [$this->validator, "validateId"],
+                "type" => Type::NUMBER
             ]
         ];
     }
@@ -72,62 +55,34 @@ class QuantitySchema extends Service
     {
         return [
             "search" => [
-                "type" => "string",
-                "maxLength" => OML_API_MAX_LABEL_LENGTH,
+                "required" => false,
+                "type" => Type::LABEL
             ],
             "indexPage" => [
-                "type" => "integer",
-                "minimum" => 1,
-                "default" => 1
+                "required" => false,
+                "type" => Type::NUMBER
             ],
             "pageSize" => [
-                "type" => "integer",
-                "maximum" => OML_API_MAX_PAGE_SIZE,
-                "minimum" => OML_API_MIN_PAGE_SIZE,
-                "default" => OML_API_DEFAULT_PAGE_SIZE
+                "required" => false,
+                "type" => Type::NUMBER
             ]
         ];
     }
 
     public function update()
     {
-        return [
-            "id" => [
-                "required" => true,
-                "type" => "integer",
-                "validate_callback" => [$this->validator, "validateId"],
-            ],
-            "name" => [
-                "required" => true,
-                "type" => "string",
-                "validate_callback" => [$this->validator, "validateName"]
-            ],
-            "description" => [
-                "required" => true,
-                "type" => "string",
-                "maxLength" => OML_API_MAX_DESCRIPTION_LENGTH
-            ],
-            "items" => [
-                "required" => true,
-                "type" => "array",
-                "validate_callback" => [$this->validator, "validateItems"],
-                "items" => [
-                    "type" => "object",
-                    "additionalProperties" => false,
-                    "properties" => [
-                        "id" => [
-                            "type" => [
-                                "integer",
-                                "null"
-                            ]
-                        ],
-                        "value" => [
-                            "required" => true,
-                            "type" => "string"
-                        ]
-                    ]
-                ]
-            ]
+        $schema = $this->create();
+
+        $schema["id"] = [
+            "required" => true,
+            "type" => Type::NUMBER
         ];
+
+        $schema["items"]["item"]["id"] = [
+            "required" => false,
+            "type" => Type::NUMBER
+        ];
+
+        return $schema;
     }
 }

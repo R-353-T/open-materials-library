@@ -10,7 +10,10 @@ abstract class Validator extends Service
             $model->$property = $result[1];
             return true;
         } else {
-            $error_list[$property] = $result[1];
+            $error_list[] = [
+                "parameter" => $property,
+                "error" => $result[1]
+            ];
             return false;
         }
     }
