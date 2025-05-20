@@ -10,9 +10,12 @@ use PDO;
 
 class TypeRepository extends Repository
 {
+    private readonly string $typeInputTable;
+
     public function __construct()
     {
         parent::__construct(___DB_TYPE___, TypeModel::class);
+        $this->typeInputTable = ___DB_TYPE_INPUT___;
     }
 
     public function selectAll(SqlSelectOptions $options = new SqlSelectOptions()): array
@@ -24,7 +27,7 @@ class TypeRepository extends Repository
             ty.`column`,
             ti.`name` as `input`
         FROM {$this->table} ty
-        JOIN `oml_type_input` ti ON ti.`id` = ty.`inputId`
+        JOIN {$this->typeInputTable} ti ON ti.`id` = ty.`inputId`
         ORDER BY ty.`id` ASC
         SQL);
 
