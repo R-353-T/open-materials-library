@@ -2,6 +2,7 @@
 
 require_once __DIR__ . "/php/oml_constant.php";
 require_once __DIR__ . "/php/function/__index__.php";
+require_once __DIR__ . "/api/function/__index__.php";
 
 use oml\api\middleware\AuthLimitMiddleware;
 use oml\api\middleware\BucketMiddleware;

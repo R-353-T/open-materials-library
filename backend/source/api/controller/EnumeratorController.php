@@ -2,59 +2,18 @@
 
 namespace oml\api\controller;
 
+use oml\api\model\EnumeratorModel;
+use oml\api\repository\EnumeratorItemRepository;
 use oml\api\repository\EnumeratorRepository;
 use oml\php\abstract\Controller;
-use oml\php\core\OkResponse;
-use oml\php\core\PageResponse;
+use oml\php\abstract\Repository;
 use oml\php\core\SqlSelectOptions;
-use oml\php\enum\ControllerHttpMethod;
-use oml\php\enum\ControllerPermission;
 use oml\php\error\NotFoundError;
-use PDO;
-use WP_REST_Request;
 
 class EnumeratorController extends Controller
 {
-    protected string $endpoint = "enumerator";
-    protected array $routeList = [
-        [
-            "endpoint"      => "",
-            "callback"      => "get",
-            "http_method"   => ControllerHttpMethod::GET,
-            "permission"    => ControllerPermission::SUBSCRIBER,
-            "schema"        => "get"
-        ],
-        [
-            "endpoint"      => "",
-            "callback"      => "delete",
-            "http_method"   => ControllerHttpMethod::DELETE,
-            "permission"    => ControllerPermission::EDITOR,
-            "schema"        => "delete"
-        ],
-        [
-            "endpoint"      => "/create",
-            "callback"      => "create",
-            "http_method"   => ControllerHttpMethod::POST,
-            "permission"    => ControllerPermission::EDITOR,
-            "schema"        => "create"
-        ],
-        [
-            "endpoint"      => "/update",
-            "callback"      => "update",
-            "http_method"   => ControllerHttpMethod::POST,
-            "permission"    => ControllerPermission::EDITOR,
-            "schema"        => "update"
-        ],
-        [
-            "endpoint"      => "/list",
-            "callback"      => "list",
-            "http_method"   => ControllerHttpMethod::GET,
-            "permission"    => ControllerPermission::SUBSCRIBER,
-            "schema"        => "list"
-        ]
-    ];
-
     private readonly EnumeratorRepository $repository;
+    private readonly EnumeratorItemRepository $itemRepository;
 
     public function __construct()
     {
@@ -62,54 +21,57 @@ class EnumeratorController extends Controller
         $this->repository = EnumeratorRepository::inject();
     }
 
-    public function create(WP_REST_Request $request)
+    public function create(EnumeratorModel $enumerator)
     {
-    }
+        $error = $this->repository->insert($enumerator);
 
-    public function delete(WP_REST_Request $request)
-    {
-        $id = $request->get_param("id");
-        $deleted = $this->repository->deleteById($id);
-        return new OkResponse($deleted);
-    }
-
-    public function get(WP_REST_Request $request)
-    {
-        $id = $request->get_param("id");
-        $model = $this->repository->selectById($id);
-        return new OkResponse($model);
-    }
-
-    public function list(WP_REST_Request $request)
-    {
-        $indexPage = $request->get_param("indexPage");
-        $pageSize = $request->get_param("pageSize");
-        $options = new SqlSelectOptions($indexPage, $pageSize);
-
-        if ($request->get_param("search") !== null) {
-            $options->where(
-                [
-                    "query" => 'LOWER(`name`) LIKE LOWER(CONCAT("%", :_search, "%"))',
-                    "binds" => [
-                        [":_search", $request->get_param("search"), PDO::PARAM_STR]
-                    ],
-                    "and" => true
-                ]
-            );
+        if (is_wp_error($error)) {
+            return $error;
         }
 
+        return $this->OK($enumerator);
+    }
+
+    public function delete(EnumeratorModel $enumerator)
+    {
+        $deleted = $this->repository->deleteById($enumerator->id);
+        return $this->OK($deleted);
+    }
+
+    public function get(EnumeratorModel $enumerator)
+    {
+        $enumerator = $this->repository->selectById($enumerator->id);
+        $enumerator->items = $this->itemRepository->selectAllByEnumeratorId($enumerator->id);
+        return $this->OK($enumerator);
+    }
+
+    public function update(EnumeratorModel $enumerator)
+    {
+        $error = $this->repository->update($enumerator);
+
+        if (is_wp_error($error)) {
+            return $error;
+        }
+
+        return $this->OK($enumerator);
+    }
+
+    public function list(SqlSelectOptions $options)
+    {
         $options->orderBy("name", "ASC");
-        $finalPage = $this->repository->finalPage($options);
+        $count = $this->repository->countAll($options);
+        $final = Repository::getFinalPageCount($count, $options->pageSize);
 
-        if ($finalPage < $indexPage) {
+        if ($final < $options->pageIndex) {
             return new NotFoundError();
-        } else {
-            $items = $this->repository->selectAll($options);
-            return new PageResponse($items, $indexPage, $pageSize, $finalPage);
         }
-    }
 
-    public function update(WP_REST_Request $request)
-    {
+        $items = $this->repository->selectAll($options);
+        return $this->OKPage(
+            $items,
+            $options->pageIndex,
+            $options->pageSize,
+            $final
+        );
     }
 }

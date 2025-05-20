@@ -2,9 +2,13 @@
 
 namespace oml\api\enum;
 
-class EnumeratorItemValidator
+use oml\api\model\EnumeratorItemModel;
+use oml\php\abstract\Validator;
+
+class EnumeratorItemValidator extends Validator
 {
     public function __construct()
     {
+        parent::__construct(EnumeratorItemModel::class);
     }
 }

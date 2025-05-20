@@ -19,9 +19,9 @@ class QuantityItemRepository extends Repository
     }
 
     /**
-     * @param QuantityItemModel $model
+     * @param QuantityItemModel $quantity_item
      */
-    public function insert(mixed $model): int|WP_Error
+    public function insert(mixed $quantity_item): int|WP_Error
     {
         $statement = Database::$PDO->prepare(<<<SQL
         INSERT INTO {$this->table}
@@ -38,34 +38,34 @@ class QuantityItemRepository extends Repository
         )
         SQL);
 
-        $statement->bindValue(":_quantityId", $model->quantityId, PDO::PARAM_INT);
-        $statement->bindValue(":_value", $model->value, PDO::PARAM_STR);
-        $statement->bindValue(":_position", $model->position, PDO::PARAM_INT);
+        $statement->bindValue(":_quantityId", $quantity_item->quantityId, PDO::PARAM_INT);
+        $statement->bindValue(":_value", $quantity_item->value, PDO::PARAM_STR);
+        $statement->bindValue(":_position", $quantity_item->position, PDO::PARAM_INT);
         $statement->execute();
-        $model->id = Database::$PDO->lastInsertId();
-        return $model->id;
+        $quantity_item->id = Database::$PDO->lastInsertId();
+        return $quantity_item->id;
     }
 
     /**
-     * @param QuantityItemModel $model
+     * @param QuantityItemModel $quantity_item
      */
-    public function update(mixed $model): int|WP_Error
+    public function update(mixed $quantity_item): int|WP_Error
     {
         $statement = Database::$PDO->prepare(<<<SQL
         UPDATE {$this->table}
         SET
-        `quantityId` = :_quantityId,
-        `value` = :_value,
-        `position` = :_position
+            `quantityId` = :_quantityId,
+            `value` = :_value,
+            `position` = :_position
         WHERE `id` = :_id
         SQL);
 
-        $statement->bindValue(":_quantityId", $model->quantityId, PDO::PARAM_INT);
-        $statement->bindValue(":_value", $model->value, PDO::PARAM_STR);
-        $statement->bindValue(":_position", $model->position, PDO::PARAM_INT);
-        $statement->bindValue(":_id", $model->id, PDO::PARAM_INT);
+        $statement->bindValue(":_quantityId", $quantity_item->quantityId, PDO::PARAM_INT);
+        $statement->bindValue(":_value", $quantity_item->value, PDO::PARAM_STR);
+        $statement->bindValue(":_position", $quantity_item->position, PDO::PARAM_INT);
+        $statement->bindValue(":_id", $quantity_item->id, PDO::PARAM_INT);
         $statement->execute();
-        return $model->id;
+        return $quantity_item->id;
     }
 
     public function selectAllByQuantityId(int $id): array
@@ -73,11 +73,11 @@ class QuantityItemRepository extends Repository
         $statement = Database::$PDO->prepare(<<<SQL
         SELECT *
         FROM {$this->table}
-        WHERE `quantityId` = :quantityId 
+        WHERE `quantityId` = :_quantityId 
         ORDER BY `position` ASC
         SQL);
 
-        $statement->bindValue(":quantityId", $id, PDO::PARAM_INT);
+        $statement->bindValue(":_quantityId", $id, PDO::PARAM_INT);
         $statement->execute();
         return $statement->fetchAll(PDO::FETCH_CLASS, $this->model);
     }
@@ -90,8 +90,7 @@ class QuantityItemRepository extends Repository
 
         $statement = Database::$PDO->prepare(<<<SQL
         UPDATE {$this->table}
-        SET 
-            `position` = `position` + :_by
+        SET `position` = `position` + :_by
         WHERE `quantityId` = :_quantityId
         SQL);
 
@@ -105,8 +104,7 @@ class QuantityItemRepository extends Repository
 
         $statement = Database::$PDO->prepare(<<<SQL
         UPDATE {$this->table}
-        SET
-            `value` = UUID()
+        SET `value` = UUID()
         WHERE `quantityId` = :_quantityId
         SQL);
 
@@ -114,17 +112,17 @@ class QuantityItemRepository extends Repository
         $statement->execute();
     }
 
-    public function deleteNotIn(int $quantityId, array $id_list)
+    public function deleteNotInIdList(int $quantity_id, array $id_list)
     {
         $parameter_count = count($id_list);
         $query = <<<SQL
         DELETE FROM {$this->table}
-        WHERE `quantityId` = :quantityId 
+        WHERE `quantityId` = :_quantityId 
         AND `id` NOT IN (
         SQL;
 
         for ($i = 0; $i < $parameter_count; $i++) {
-            $query .= ":id{$i}";
+            $query .= ":_id{$i}";
 
             if ($i < $parameter_count - 1) {
                 $query .= ", ";
@@ -134,10 +132,10 @@ class QuantityItemRepository extends Repository
         $query .= ")";
 
         $statement = Database::$PDO->prepare($query);
-        $statement->bindValue(":quantityId", $quantityId, PDO::PARAM_INT);
+        $statement->bindValue(":_quantityId", $quantity_id, PDO::PARAM_INT);
 
         foreach ($id_list as $index => $id) {
-            $statement->bindValue(":id{$index}", $id, PDO::PARAM_INT);
+            $statement->bindValue(":_id{$index}", $id, PDO::PARAM_INT);
         }
 
         $statement->execute();

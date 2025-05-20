@@ -2,8 +2,21 @@
 
 use oml\php\enum\APIError;
 
-function oml_validate_database_index(mixed $value, ?object $repository = null): array
+function oml__required(mixed $value): array
 {
+    if ($value === null) {
+        return [false, APIError::PARAMETER_REQUIRED];
+    }
+
+    return [true, $value];
+}
+
+function oml__id(mixed $value, object $repository): array
+{
+    if ($value === null) {
+        return [true, null];
+    }
+
     $isUnsignedInt = filter_var(
         $value,
         FILTER_VALIDATE_INT,
@@ -16,15 +29,19 @@ function oml_validate_database_index(mixed $value, ?object $repository = null): 
         return [false, APIError::PARAMETER_INVALID];
     }
 
-    if ($repository !== null && $repository->selectById($value) === false) {
+    if ($repository->selectById($value) === false) {
         return [false, APIError::PARAMETER_NOT_FOUND];
     }
 
     return [true, (int) $value];
 }
 
-function oml_validate_name(mixed $value, ?object $repository = null, ?int $id = null): array
+function oml__name(mixed $value, object $repository, ?int $id = null): array
 {
+    if ($value === null) {
+        return [true, null];
+    }
+
     if (is_string($value) === false) {
         return [false, APIError::PARAMETER_INVALID];
     }
@@ -48,8 +65,12 @@ function oml_validate_name(mixed $value, ?object $repository = null, ?int $id = 
     return [true, $value];
 }
 
-function oml_validate_description(mixed $value): array
+function oml__description(mixed $value): array
 {
+    if ($value === null) {
+        return [true, null];
+    }
+
     if (is_string($value) === false) {
         return [false, APIError::PARAMETER_INVALID];
     }
@@ -63,17 +84,11 @@ function oml_validate_description(mixed $value): array
     return [true, $value];
 }
 
-function oml_validate_image(mixed $value, $required = true): array
+function oml__image(mixed $value): array
 {
-    if (isset($value["file"]) === false) {
-        if ($required) {
-            return [false, APIError::PARAMETER_REQUIRED];
-        } else {
-            return [true, null];
-        }
+    if ($value === null) {
+        return [true, null];
     }
-
-    $value = $value["file"];
 
     $mime_list = [
         "png"   => "image/png",
@@ -105,10 +120,10 @@ function oml_validate_image(mixed $value, $required = true): array
     return [true, $value];
 }
 
-function oml_validate_pagination_index(mixed $value): array
+function oml__pagination_index(mixed $value): array
 {
     if ($value === null) {
-        return [false, APIError::PARAMETER_REQUIRED];
+        return [true, null];
     }
 
     $isUnsignedInt = filter_var(
@@ -126,7 +141,7 @@ function oml_validate_pagination_index(mixed $value): array
     return [true, (int) $value];
 }
 
-function oml_validate_pagination_size(mixed $value): array
+function oml__pagination_size(mixed $value): array
 {
     if ($value === null) {
         return [true, ___PAGE_SIZE___];
@@ -152,6 +167,23 @@ function oml_validate_pagination_size(mixed $value): array
     }
 
     return [true, (int) $value];
+}
+
+function oml__search(mixed $value): array
+{
+    if ($value === null) {
+        return [true, null];
+    }
+
+    if (is_string($value) === false) {
+        return [false, APIError::PARAMETER_INVALID];
+    }
+
+    if (mb_strlen($value) > ___MAX_LABEL_LENGTH___) {
+        return [false, APIError::PARAMATER_STRING_TOO_LONG];
+    }
+
+    return [true, $value];
 }
 
 function oml_validate_array(mixed $value): array

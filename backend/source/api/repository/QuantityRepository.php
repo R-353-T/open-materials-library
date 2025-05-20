@@ -123,7 +123,7 @@ class QuantityRepository extends Repository
             // * 3. Delete items not in $quantity->items    *
             // * ------------------------------------------ *
 
-            $this->itemRepository->deleteNotIn($quantity->id, $id_list);
+            $this->itemRepository->deleteNotInIdList($quantity->id, $id_list);
 
             Database::$PDO->commit();
             return $quantity->id;

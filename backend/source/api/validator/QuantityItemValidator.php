@@ -14,10 +14,11 @@ class QuantityItemValidator extends Validator
 
     public function __construct()
     {
+        parent::__construct(QuantityItemModel::class);
         $this->repository = QuantityItemRepository::inject();
     }
 
-    public function validate(int $position, mixed $item, QuantityModel $quantity, array &$errors): array
+    public function item(int $position, mixed $item, QuantityModel $quantity, array &$errors): array
     {
         $quantity_item = new QuantityItemModel();
 

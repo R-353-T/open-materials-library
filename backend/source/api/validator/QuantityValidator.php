@@ -20,6 +20,7 @@ class QuantityValidator extends Validator
 
     public function __construct()
     {
+        parent::__construct(QuantityModel::class);
         $this->controller = QuantityController::inject();
         $this->repository = QuantityRepository::inject();
         $this->itemValidator = QuantityItemValidator::inject();

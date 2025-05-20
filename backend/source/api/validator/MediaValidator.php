@@ -3,7 +3,6 @@
 namespace oml\api\validator;
 
 use oml\api\controller\MediaController;
-use oml\php\enum\APIError;
 use oml\api\model\MediaModel;
 use oml\api\repository\MediaRepository;
 use oml\api\service\MediaService;
@@ -21,7 +20,7 @@ class MediaValidator extends Validator
 
     public function __construct()
     {
-        parent::__construct();
+        parent::__construct(MediaModel::class);
         $this->controller = MediaController::inject();
         $this->service = MediaService::inject();
         $this->repository = MediaRepository::inject();
@@ -29,201 +28,135 @@ class MediaValidator extends Validator
 
     public function create(WP_REST_Request $request)
     {
-        $errors = [];
-        $media = new MediaModel();
+        $this
+            ->initialize("name", $request->get_param("name"))
+            ->validate("oml__required")
+            ->validate("oml__name", [$this->repository])
+            ->assign();
 
-        // * ------------------------------------------ *
-        // * 1. Name                                    *
-        // * ------------------------------------------ *
+        $this
+            ->initialize("description", $request->get_param("description"))
+            ->validate("oml__required")
+            ->validate("oml__description")
+            ->assign();
 
-        $name = $request->get_param("name");
-        $name = oml_validate_name($name, $this->repository);
-        self::apply($name, $errors, $media, "name");
+        $file = isset($request->get_file_params()["file"]) ? $request->get_file_params()["file"] : null;
+        $this
+            ->initialize("file", $file)
+            ->validate("oml__required")
+            ->validate("oml__image");
 
-        // * ------------------------------------------ *
-        // * 2. Description                             *
-        // * ------------------------------------------ *
-
-        $description = $request->get_param("description");
-        $description = oml_validate_description($description);
-        self::apply($description, $errors, $media, "description");
-
-        // * ------------------------------------------ *
-        // * 3. File (image)                            *
-        // * ------------------------------------------ *
-
-        $files = $request->get_file_params();
-        $file = oml_validate_image($files);
-
-        if ($file[0]) {
-            if (count($errors) === 0) {
-                $media->path = $this->service->upload($file[1]);
-            }
-        } else {
-            $errors[] = [
-                "parameter" => "file",
-                "error" => $file[1]
-            ];
+        if ($this->hasError("file") === false) {
+            $this->model->path = $this->service->upload($this->parameterValue);
         }
 
-        if (count($errors) > 0) {
-            return new BadRequestError($errors);
-        }
-
-        return $this->controller->create($media);
+        return $this->hasError()
+            ? new BadRequestError($this->error_list)
+            : $this->controller->create($this->model);
     }
 
     public function delete(WP_REST_Request $request)
     {
-        $errors = [];
-        $media = new MediaModel();
+        $this
+            ->initialize("id", $request->get_param("id"))
+            ->validate("oml__required")
+            ->validate("oml__id", [$this->repository])
+            ->assign();
 
-        // * ------------------------------------------ *
-        // * 1. Id                                      *
-        // * ------------------------------------------ *
-
-        $id = $request->get_param("id");
-        $id = oml_validate_database_index($id, $this->repository);
-        self::apply($id, $errors, $media, "id");
-
-        if (count($errors) > 0) {
-            return new BadRequestError($errors);
-        }
-
-        return $this->controller->delete($media);
+        return $this->hasError()
+            ? new BadRequestError($this->error_list)
+            : $this->controller->delete($this->model);
     }
 
     public function get(WP_REST_Request $request)
     {
-        $errors = [];
-        $media = new MediaModel();
+        $this
+            ->initialize("id", $request->get_param("id"))
+            ->validate("oml__required")
+            ->validate("oml__id", [$this->repository])
+            ->assign();
 
-        // * ------------------------------------------ *
-        // * 1. Id                                      *
-        // * ------------------------------------------ *
-
-        $id = $request->get_param("id");
-        $id = oml_validate_database_index($id, $this->repository);
-        self::apply($id, $errors, $media, "id");
-
-        if (count($errors) > 0) {
-            return new BadRequestError($errors);
-        }
-
-        return $this->controller->get($media);
+        return $this->hasError()
+            ? new BadRequestError($this->error_list)
+            : $this->controller->get($this->model);
     }
 
     public function update(WP_REST_Request $request)
     {
-        $errors = [];
-        $media = new MediaModel();
+        $this
+            ->initialize("id", $request->get_param("id"))
+            ->validate("oml__required")
+            ->validate("oml__id", [$this->repository])
+            ->assign();
 
-        // * ------------------------------------------ *
-        // * 1. Id                                      *
-        // * ------------------------------------------ *
 
-        $id = $request->get_param("id");
-        $id = oml_validate_database_index($id, $this->repository);
-        self::apply($id, $errors, $media, "id");
-        $media = $this->repository->selectById($media->id);
-
-        // * ------------------------------------------ *
-        // * 2. Name                                    *
-        // * ------------------------------------------ *
-
-        if ($id[0]) {
-            $name = $request->get_param("name");
-            $name = oml_validate_name($name, $this->repository, $media->id);
-            self::apply($name, $errors, $media, "name");
+        if ($this->hasError("id") === false) {
+            $this
+                ->initialize("name", $request->get_param("name"))
+                ->validate("oml__required")
+                ->validate("oml__name", [$this->repository, $this->model->id])
+                ->assign();
         }
 
-        // * ------------------------------------------ *
-        // * 3. Description                             *
-        // * ------------------------------------------ *
+        $this
+            ->initialize("description", $request->get_param("description"))
+            ->validate("oml__required")
+            ->validate("oml__description")
+            ->assign();
 
-        $description = $request->get_param("description");
-        $description = oml_validate_description($description);
-        self::apply($description, $errors, $media, "description");
 
-        // * ------------------------------------------ *
-        // * 4. File (image)                            *
-        // * ------------------------------------------ *
+        $file = isset($request->get_file_params()["file"]) ? $request->get_file_params()["file"] : null;
+        $this
+            ->initialize("file", $file)
+            ->validate("oml__image");
 
-        $files = $request->get_file_params();
-        $file = oml_validate_image($files, false);
-
-        if ($file[0]) {
-            if (count($errors) === 0 && $file[1] !== null) {
-                $media->path = $this->service->upload($file[1]);
+        if ($this->hasError("file") === false) {
+            if ($this->parameterValue !== null) {
+                $this->model->path = $this->service->upload($this->parameterValue);
+            } else {
+                $this->model->path = $this->repository->selectById($this->model->id)->path;
             }
-        } else {
-            $errors[] = [
-                "parameter" => "file",
-                "error" => $file[1]
-            ];
         }
 
-        if (count($errors) > 0) {
-            return new BadRequestError($errors);
-        }
-
-        return $this->controller->update($media);
+        return $this->hasError()
+            ? new BadRequestError($this->error_list)
+            : $this->controller->update($this->model);
     }
 
     public function list(WP_REST_Request $request)
     {
-        $errors = [];
         $options = new SqlSelectOptions();
 
-        // * ------------------------------------------ *
-        // * 1. Page index                              *
-        // * ------------------------------------------ *
+        $this
+            ->initialize("pageIndex", $request->get_param("pageIndex"))
+            ->validate("oml__required")
+            ->validate("oml__pagination_index")
+            ->assign($options);
 
-        $index = $request->get_param("pageIndex");
-        $index = oml_validate_pagination_index($index);
-        self::apply($index, $errors, $options, "pageIndex");
+        $this
+            ->initialize("pageSize", $request->get_param("pageSize"))
+            ->validate("oml__required")
+            ->validate("oml__pagination_size")
+            ->assign($options);
 
-        // * ------------------------------------------ *
-        // * 2. Page size                               *
-        // * ------------------------------------------ *
+        $this
+            ->initialize("search", $request->get_param("search"))
+            ->validate("oml__search");
 
-        $size = $request->get_param("pageSize");
-        $size = oml_validate_pagination_size($size);
-        self::apply($size, $errors, $options, "pageSize");
-
-        // * ------------------------------------------ *
-        // * 2. Search                                  *
-        // * ------------------------------------------ *
-
-        $search = $request->get_param("search");
-        if ($search !== null) {
-            if (is_string($search) === false) {
-                $errors[] = [
-                    "parameter" => "search",
-                    APIError::PARAMETER_INVALID
-                ];
-            } elseif (strlen($search) > ___MAX_LABEL_LENGTH___) {
-                $errors[] = [
-                    "parameter" => "search",
-                    APIError::PARAMATER_STRING_TOO_LONG
-                ];
-            } else {
-                $options->where(
-                    [
-                        "query" => 'LOWER(`name`) LIKE LOWER(CONCAT("%", :_search, "%"))',
-                        "binds" => [
-                            [":_search", $request->get_param("search"), PDO::PARAM_STR]
-                        ],
-                        "and" => true
-                    ]
-                );
-            }
+        if ($this->hasError("search") === false && $this->parameterValue !== null) {
+            $options->where(
+                [
+                    "query" => 'LOWER(`name`) LIKE LOWER(CONCAT("%", :_search, "%"))',
+                    "binds" => [
+                        [":_search", $request->get_param("search"), PDO::PARAM_STR]
+                    ],
+                    "and" => true
+                ]
+            );
         }
 
-        if (count($errors) > 0) {
-            return new BadRequestError($errors);
-        }
-
-        return $this->controller->list($options);
+        return $this->hasError()
+            ? new BadRequestError($this->error_list)
+            : $this->controller->list($options);
     }
 }

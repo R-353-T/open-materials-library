@@ -4,24 +4,9 @@ namespace oml\api\controller;
 
 use oml\api\repository\TypeRepository;
 use oml\php\abstract\Controller;
-use oml\php\core\PageResponse;
-use oml\php\enum\ControllerHttpMethod;
-use oml\php\enum\ControllerPermission;
-use WP_REST_Request;
 
 class TypeController extends Controller
 {
-    protected string $endpoint = "type";
-    protected array $routeList = [
-        [
-            "endpoint"      => "/list",
-            "callback"      => "list",
-            "http_method"   => ControllerHttpMethod::GET,
-            "permission"    => ControllerPermission::SUBSCRIBER,
-            "schema"        => null
-        ]
-    ];
-
     private readonly TypeRepository $repository;
 
     public function __construct()
@@ -30,9 +15,9 @@ class TypeController extends Controller
         $this->repository = TypeRepository::inject();
     }
 
-    public function list(WP_REST_Request $request)
+    public function list()
     {
         $items = $this->repository->selectAll();
-        return new PageResponse($items, 1, OML_API_MAX_PAGE_SIZE, 1);
+        return $this->OKPage($items, 1, ___MAX_PAGE_SIZE___, 1);
     }
 }

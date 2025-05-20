@@ -10,10 +10,7 @@ use WP_Error;
 class MediaService extends Service
 {
     /**
-     * Upload a file and return its relative path
-     *
-     * @param mixed $file A file to upload
-     *
+     * @param array $file A file to upload
      * @return string The relative path to the uploaded file
      */
     public function upload(array &$file): string
@@ -31,10 +28,7 @@ class MediaService extends Service
 
 
     /**
-     * Delete a file from WordPress (warning using this method will delete the file from the server)
-     *
      * @param string $relative The relative path to the file to delete
-     *
      * @return bool|WP_Error Whether the file was deleted successfully
      */
     public function delete(string $relative): bool|WP_Error
