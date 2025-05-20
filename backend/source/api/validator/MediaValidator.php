@@ -135,7 +135,6 @@ class MediaValidator extends Validator
 
         $this
             ->initialize("pageSize", $request->get_param("pageSize"))
-            ->validate("oml__required")
             ->validate("oml__pagination_size")
             ->assign($options);
 

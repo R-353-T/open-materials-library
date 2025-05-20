@@ -33,6 +33,7 @@ class QuantityRepository extends Repository
 
     /**
      * @param QuantityModel $quantity
+     * TODO - Optimizable with bulk insert
      */
     public function insert(mixed $quantity): int|WP_Error
     {
@@ -57,16 +58,10 @@ class QuantityRepository extends Repository
             $statement->execute();
             $quantity->id = Database::$PDO->lastInsertId();
 
-            // ? Optimizable with bulk insert               ?
-            // ? ------------------------------------------ ?
-
-            foreach ($quantity->items as $position => $item) {
+            foreach ($quantity->items as $item) {
                 $item->quantityId = $quantity->id;
-                $item->position = $position;
                 $this->itemRepository->insert($item);
             }
-
-            // ? ------------------------------------------ ?
 
             Database::$PDO->commit();
             return $quantity->id;
@@ -78,6 +73,7 @@ class QuantityRepository extends Repository
 
     /**
      * @param QuantityModel $quantity
+     * TODO - Optimizable with bulk insert/update
      */
     public function update(mixed $quantity): int|WP_Error
     {
@@ -94,34 +90,22 @@ class QuantityRepository extends Repository
 
         try {
             Database::$PDO->beginTransaction();
+
             $statement->execute();
-
-            // * ------------------------------------------ *
-            // * 1. Free positions and values of items      *
-            // * ------------------------------------------ *
-
             $this->itemRepository->resetAllByQuantityId($quantity->id);
-
-            // * ------------------------------------------ *
-            // * 2. Update items                            *
-            // * ------------------------------------------ *
-
             $id_list = [];
 
             foreach ($quantity->items as $item) {
                 $item->quantityId = $quantity->id;
-                $id_list[] = $item->id;
 
                 if ($item->id !== null) {
                     $this->itemRepository->update($item);
                 } else {
                     $this->itemRepository->insert($item);
                 }
-            }
 
-            // * ------------------------------------------ *
-            // * 3. Delete items not in $quantity->items    *
-            // * ------------------------------------------ *
+                $id_list[] = $item->id;
+            }
 
             $this->itemRepository->deleteNotInIdList($quantity->id, $id_list);
 

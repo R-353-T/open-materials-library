@@ -8,6 +8,8 @@ abstract class Validator extends Service
     protected array $error_list = [];
     protected string $paramaterName = "";
     protected mixed $parameterValue = null;
+    protected ?string $propertyName = null;
+    protected ?int $propertyIndex = null;
 
     public function __construct(string $model_class)
     {
@@ -17,10 +19,20 @@ abstract class Validator extends Service
 
     protected function addError(string $parameter_name, string $error_code)
     {
-        $this->error_list[] = [
+        $error = [
             "parameter" => $parameter_name,
             "error" => $error_code
         ];
+
+        if ($this->propertyName !== null) {
+            $error["property"] = $this->propertyName;
+        }
+
+        if ($this->propertyIndex !== null) {
+            $error["index"] = $this->propertyIndex;
+        }
+
+        $this->error_list[] = $error;
     }
 
     protected function hasError(?string $parameter_name = null): bool
@@ -38,10 +50,16 @@ abstract class Validator extends Service
         return false;
     }
 
-    protected function initialize(string $parameter_name, mixed $parameter_value): self
-    {
+    protected function initialize(
+        string $parameter_name,
+        mixed $parameter_value,
+        ?string $property_name = null,
+        ?int $property_index = null
+    ): self {
         $this->paramaterName = $parameter_name;
         $this->parameterValue = $parameter_value;
+        $this->propertyName = $property_name;
+        $this->propertyIndex = $property_index;
         return $this;
     }
 
@@ -64,10 +82,12 @@ abstract class Validator extends Service
     public function assign(?object $to = null)
     {
         if ($this->hasError($this->paramaterName) === false) {
+            $property_name = $this->propertyName ?? $this->paramaterName;
+
             if ($to !== null) {
-                $to->{$this->paramaterName} = $this->parameterValue;
+                $to->{$property_name} = $this->parameterValue;
             } else {
-                $this->model->{$this->paramaterName} = $this->parameterValue;
+                $this->model->{$property_name} = $this->parameterValue;
             }
         }
 

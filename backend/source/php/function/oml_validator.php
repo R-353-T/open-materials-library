@@ -186,8 +186,12 @@ function oml__search(mixed $value): array
     return [true, $value];
 }
 
-function oml_validate_array(mixed $value): array
+function oml__array(mixed $value): array
 {
+    if ($value === null) {
+        return [true, null];
+    }
+
     if (is_array($value) === false) {
         return [false, APIError::PARAMETER_INVALID];
     }
@@ -195,16 +199,8 @@ function oml_validate_array(mixed $value): array
     return [true, $value];
 }
 
-function oml_validate_label(mixed $value, bool $not_empty = true, bool $required = true): array
+function oml__label(mixed $value, bool $not_empty = true): array
 {
-    if ($value === null) {
-        if ($required) {
-            return [false, APIError::PARAMETER_REQUIRED];
-        } else {
-            return [true, null];
-        }
-    }
-
     if (is_string($value) === false) {
         return [false, APIError::PARAMETER_INVALID];
     }

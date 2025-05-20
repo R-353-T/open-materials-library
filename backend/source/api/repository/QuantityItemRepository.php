@@ -24,18 +24,18 @@ class QuantityItemRepository extends Repository
     public function insert(mixed $quantity_item): int|WP_Error
     {
         $statement = Database::$PDO->prepare(<<<SQL
-        INSERT INTO {$this->table}
-        (
-            `quantityId`,
-            `value`,
-            `position`
-        )
-        VALUES
-        (
-            :_quantityId,
-            :_value,
-            :_position
-        )
+            INSERT INTO {$this->table}
+            (
+                `quantityId`,
+                `value`,
+                `position`
+            )
+            VALUES
+            (
+                :_quantityId,
+                :_value,
+                :_position
+            )
         SQL);
 
         $statement->bindValue(":_quantityId", $quantity_item->quantityId, PDO::PARAM_INT);
@@ -52,12 +52,12 @@ class QuantityItemRepository extends Repository
     public function update(mixed $quantity_item): int|WP_Error
     {
         $statement = Database::$PDO->prepare(<<<SQL
-        UPDATE {$this->table}
-        SET
-            `quantityId` = :_quantityId,
-            `value` = :_value,
-            `position` = :_position
-        WHERE `id` = :_id
+            UPDATE {$this->table}
+            SET
+                `quantityId` = :_quantityId,
+                `value` = :_value,
+                `position` = :_position
+            WHERE `id` = :_id
         SQL);
 
         $statement->bindValue(":_quantityId", $quantity_item->quantityId, PDO::PARAM_INT);
@@ -71,10 +71,10 @@ class QuantityItemRepository extends Repository
     public function selectAllByQuantityId(int $id): array
     {
         $statement = Database::$PDO->prepare(<<<SQL
-        SELECT *
-        FROM {$this->table}
-        WHERE `quantityId` = :_quantityId 
-        ORDER BY `position` ASC
+            SELECT *
+            FROM {$this->table}
+            WHERE `quantityId` = :_quantityId 
+            ORDER BY `position` ASC
         SQL);
 
         $statement->bindValue(":_quantityId", $id, PDO::PARAM_INT);
@@ -89,9 +89,9 @@ class QuantityItemRepository extends Repository
         // * ------------------------------------------ *
 
         $statement = Database::$PDO->prepare(<<<SQL
-        UPDATE {$this->table}
-        SET `position` = `position` + :_by
-        WHERE `quantityId` = :_quantityId
+            UPDATE {$this->table}
+            SET `position` = `position` + :_by
+            WHERE `quantityId` = :_quantityId
         SQL);
 
         $statement->bindValue(":_quantityId", $quantity_id, PDO::PARAM_INT);
@@ -103,16 +103,16 @@ class QuantityItemRepository extends Repository
         // * ------------------------------------------ *
 
         $statement = Database::$PDO->prepare(<<<SQL
-        UPDATE {$this->table}
-        SET `value` = UUID()
-        WHERE `quantityId` = :_quantityId
+            UPDATE {$this->table}
+            SET `value` = UUID()
+            WHERE `quantityId` = :_quantityId
         SQL);
 
         $statement->bindValue(":_quantityId", $quantity_id, PDO::PARAM_INT);
         $statement->execute();
     }
 
-    public function deleteNotInIdList(int $quantity_id, array $id_list)
+    public function deleteNotInIdList(int $quantity_id, array $id_list): int
     {
         $parameter_count = count($id_list);
         $query = <<<SQL
@@ -122,7 +122,7 @@ class QuantityItemRepository extends Repository
         SQL;
 
         for ($i = 0; $i < $parameter_count; $i++) {
-            $query .= ":_id{$i}";
+            $query .= ":_itemId{$i}";
 
             if ($i < $parameter_count - 1) {
                 $query .= ", ";
@@ -135,7 +135,7 @@ class QuantityItemRepository extends Repository
         $statement->bindValue(":_quantityId", $quantity_id, PDO::PARAM_INT);
 
         foreach ($id_list as $index => $id) {
-            $statement->bindValue(":_id{$index}", $id, PDO::PARAM_INT);
+            $statement->bindValue(":_itemId{$index}", $id, PDO::PARAM_INT);
         }
 
         $statement->execute();
