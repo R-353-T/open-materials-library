@@ -3,7 +3,9 @@ create table oml__datasheet_category (
     `name` varchar(255) not null,
     `description` varchar(8192) not null,
     `parentId` int(11) unsigned,
+    `position` int(11) unsigned not null,
 
-    constraint `oml_datasheet_category__name` unique (`name`),
-    constraint `oml_datasheet_category__parentId` foreign key (`parentId`) references `oml__datasheet_category` (`id`)
+    constraint `oml_datasheet_category__name` unique (`parentId`, `name`),
+    constraint `oml_datasheet_category__parentId` foreign key (`parentId`) references `oml__datasheet_category` (`id`),
+    constraint `oml_datasheet_category__position` unique (`parentId`, `position`)
 );

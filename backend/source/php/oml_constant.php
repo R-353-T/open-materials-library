@@ -72,9 +72,9 @@ defined("___DB_ENUMERATOR___") or define("___DB_ENUMERATOR___", "oml__enumerator
 
 defined("___DB_ENUMERATOR_ITEM___") or define("___DB_ENUMERATOR_ITEM___", "oml__enumerator_item");
 
-defined("___DB_SET_GROUP___") or define("___DB_SET_GROUP___", "oml__group");
+defined("___DB_DATASHEET_CATEGORY___") or define("___DB_DATASHEET_CATEGORY___", "oml__datasheet_category");
 
-defined("___DB_SET_FIELD___") or define("___DB_SET_FIELD___", "oml__field");
+defined("___DB_DATASHEET_FIELD___") or define("___DB_DATASHEET_FIELD___", "oml__datasheet_field");
 
 defined("___DB_DATASHEET___") or define("___DB_DATASHEET___", "oml__datasheet");
 

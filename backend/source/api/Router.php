@@ -2,10 +2,12 @@
 
 namespace oml\api;
 
+use oml\api\schema\DatasheetCategorySchema;
 use oml\api\schema\EnumeratorSchema;
 use oml\api\schema\MediaSchema;
 use oml\api\schema\QuantitySchema;
 use oml\api\schema\TypeSchema;
+use oml\api\validator\DatasheetCategoryValidator;
 use oml\api\validator\EnumeratorValidator;
 use oml\api\validator\MediaValidator;
 use oml\api\validator\QuantityValidator;
@@ -110,6 +112,41 @@ class Router extends Service
             "enumerator" => [
                 "schema" => EnumeratorSchema::inject(),
                 "validator" => EnumeratorValidator::inject(),
+                "endpoints" => [
+                    [
+                        "callback"      => "create",
+                        "http_method"   => APIMethod::POST,
+                        "permission"    => APIPermission::EDITOR
+                    ],
+                    [
+                        "callback"      => "get",
+                        "http_method"   => APIMethod::GET,
+                        "permission"    => APIPermission::SUBSCRIBER,
+                    ],
+                    [
+                        "callback"      => "delete",
+                        "http_method"   => APIMethod::DELETE,
+                        "permission"    => APIPermission::EDITOR,
+                    ],
+                    [
+                        "endpoint"      => "/list",
+                        "callback"      => "list",
+                        "http_method"   => APIMethod::GET,
+                        "permission"    => APIPermission::SUBSCRIBER
+                    ],
+                    [
+                        "callback"      => "update",
+                        "http_method"   => APIMethod::PUT,
+                        "permission"    => APIPermission::EDITOR
+                    ]
+                ]
+            ],
+
+            // * DATASHEET CATEGORY *
+
+            "category" => [
+                "schema" => DatasheetCategorySchema::inject(),
+                "validator" => DatasheetCategoryValidator::inject(),
                 "endpoints" => [
                     [
                         "callback"      => "create",

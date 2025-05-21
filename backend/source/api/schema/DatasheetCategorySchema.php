@@ -5,7 +5,7 @@ namespace oml\api\schema;
 use oml\api\enum\Type;
 use oml\php\abstract\Service;
 
-class EnumeratorSchema extends Service
+class DatasheetCategorySchema extends Service
 {
     public function create()
     {
@@ -18,19 +18,9 @@ class EnumeratorSchema extends Service
                 "required" => true,
                 "type" => Type::TEXT
             ],
-            "items" => [
-                "required" => true,
-                "type" => "array",
-                "item" => [
-                    "value" => [
-                        "required" => true,
-                        "type" => Type::LABEL
-                    ],
-                    "quantityItemId" => [
-                        "required" => false,
-                        "type" => Type::NUMBER
-                    ]
-                ]
+            "parentId" => [
+                "required" => false,
+                "type" => Type::NUMBER
             ]
         ];
     }
@@ -62,11 +52,7 @@ class EnumeratorSchema extends Service
                 "required" => false,
                 "type" => Type::LABEL
             ],
-            "pageIndex" => [
-                "required" => false,
-                "type" => Type::NUMBER
-            ],
-            "pageSize" => [
+            "parentId" => [
                 "required" => false,
                 "type" => Type::NUMBER
             ]
@@ -79,11 +65,6 @@ class EnumeratorSchema extends Service
 
         $schema["id"] = [
             "required" => true,
-            "type" => Type::NUMBER
-        ];
-
-        $schema["items"]["item"]["id"] = [
-            "required" => false,
             "type" => Type::NUMBER
         ];
 

@@ -72,13 +72,13 @@ class MediaRepository extends Repository
                 `name` = :_name,
                 `description` = :_description,
                 `path` = :_path
-            WHERE `id` = :id
+            WHERE `id` = :_id
         SQL);
 
+        $statement->bindValue(":_id", $media->id, PDO::PARAM_INT);
         $statement->bindValue(":_name", $media->name, PDO::PARAM_STR);
         $statement->bindValue(":_description", $media->description, PDO::PARAM_STR);
         $statement->bindValue(":_path", $media->path, PDO::PARAM_STR);
-        $statement->bindValue(":id", $media->id, PDO::PARAM_INT);
 
         try {
             $statement->execute();
