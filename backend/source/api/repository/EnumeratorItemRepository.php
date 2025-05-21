@@ -24,36 +24,33 @@ class EnumeratorItemRepository extends Repository
     public function insert(mixed $enumerator_item): int|WP_Error
     {
         $statement = Database::$PDO->prepare(<<<SQL
-        INSERT INTO {$this->table}
-        (
-            `enumeratorId`,
-            `text`,
-            `number`,
-            `position`,
-            `quantityItemId`
-        )
-        VALUES
-        (
-            :_enumeratorId,
-            :_text,
-            :_number,
-            :_position,
-            :_quantityItemId
-        )
+            INSERT INTO {$this->table}
+            (
+                `enumeratorId`,
+                `text`,
+                `number`,
+                `position`,
+                `quantityItemId`
+            )
+            VALUES
+            (
+                :_enumeratorId,
+                :_text,
+                :_number,
+                :_position,
+                :_quantityItemId
+            )
         SQL);
 
         $statement->bindValue(":_enumeratorId", $enumerator_item->enumeratorId, PDO::PARAM_INT);
-
-        $value_type = isset($enumerator_item->text) ? PDO::PARAM_STR : PDO::PARAM_NULL;
-        $statement->bindValue(":_value", $enumerator_item->text, $value_type);
-
-        $number_type = isset($enumerator_item->number) ? PDO::PARAM_INT : PDO::PARAM_NULL;
-        $statement->bindValue(":_number", $enumerator_item->number, $number_type);
-
-        $quantity_item_type = isset($enumerator_item->quantityItemId) ? PDO::PARAM_INT : PDO::PARAM_NULL;
-        $statement->bindValue(":_quantityItemId", $enumerator_item->quantityItemId, $quantity_item_type);
-
         $statement->bindValue(":_position", $enumerator_item->position, PDO::PARAM_INT);
+        $statement->bindValue(":_text", ...Repository::nullable($enumerator_item->text, PDO::PARAM_STR));
+        $statement->bindValue(":_number", ...Repository::nullable($enumerator_item->number, PDO::PARAM_STR));
+        $statement->bindValue(
+            ":_quantityItemId",
+            ...Repository::nullable($enumerator_item->quantityItemId, PDO::PARAM_INT)
+        );
+
         $statement->execute();
         $enumerator_item->id = Database::$PDO->lastInsertId();
         return $enumerator_item->id;
@@ -65,48 +62,36 @@ class EnumeratorItemRepository extends Repository
     public function update(mixed $enumerator_item): int|WP_Error
     {
         $statement = Database::$PDO->prepare(<<<SQL
-        INSERT INTO {$this->table}
-        (
-            `enumeratorId`,
-            `text`,
-            `number`,
-            `position`,
-            `quantityItemId`
-        )
-        VALUES
-        (
-            :_enumeratorId,
-            :_text,
-            :_number,
-            :_position,
-            :_quantityItemId
-        )
+            UPDATE {$this->table}
+            SET
+                `text` = :_text,
+                `number` = :_number,
+                `quantityItemId` = :_quantityItemId,
+                `position` = :_position
+            WHERE `id` = :_id
         SQL);
 
+
         $statement->bindValue(":_enumeratorId", $enumerator_item->enumeratorId, PDO::PARAM_INT);
-
-        $value_type = isset($enumerator_item->text) ? PDO::PARAM_STR : PDO::PARAM_NULL;
-        $statement->bindValue(":_value", $enumerator_item->text, $value_type);
-
-        $number_type = isset($enumerator_item->number) ? PDO::PARAM_INT : PDO::PARAM_NULL;
-        $statement->bindValue(":_number", $enumerator_item->number, $number_type);
-
-        $quantity_item_type = isset($enumerator_item->quantityItemId) ? PDO::PARAM_INT : PDO::PARAM_NULL;
-        $statement->bindValue(":_quantityItemId", $enumerator_item->quantityItemId, $quantity_item_type);
-
         $statement->bindValue(":_position", $enumerator_item->position, PDO::PARAM_INT);
+        $statement->bindValue(":_text", ...Repository::nullable($enumerator_item->text, PDO::PARAM_STR));
+        $statement->bindValue(":_number", ...Repository::nullable($enumerator_item->number, PDO::PARAM_STR));
+        $statement->bindValue(
+            ":_quantityItemId",
+            ...Repository::nullable($enumerator_item->quantityItemId, PDO::PARAM_INT)
+        );
+
         $statement->execute();
-        $enumerator_item->id = Database::$PDO->lastInsertId();
         return $enumerator_item->id;
     }
 
     public function selectAllByEnumeratorId(int $id): array
     {
         $statement = Database::$PDO->prepare(<<<SQL
-        SELECT *
-        FROM {$this->table}
-        WHERE `enumeratorId` = :_enumeratorId 
-        ORDER BY `position` ASC
+            SELECT *
+            FROM {$this->table}
+            WHERE `enumeratorId` = :_enumeratorId 
+            ORDER BY `position` ASC
         SQL);
 
         $statement->bindValue(":_enumeratorId", $id, PDO::PARAM_INT);
@@ -148,13 +133,13 @@ class EnumeratorItemRepository extends Repository
     {
         $parameter_count = count($id_list);
         $query = <<<SQL
-        DELETE FROM {$this->table}
-        WHERE `enumeratorId` = :_enumeratorId 
-        AND `id` NOT IN (
+            DELETE FROM {$this->table}
+            WHERE `enumeratorId` = :_enumeratorId 
+            AND `id` NOT IN (
         SQL;
 
         for ($i = 0; $i < $parameter_count; $i++) {
-            $query .= ":_id{$i}";
+            $query .= ":_itemId{$i}";
 
             if ($i < $parameter_count - 1) {
                 $query .= ", ";
@@ -167,7 +152,7 @@ class EnumeratorItemRepository extends Repository
         $statement->bindValue(":_enumeratorId", $enumerator_id, PDO::PARAM_INT);
 
         foreach ($id_list as $index => $id) {
-            $statement->bindValue(":_id{$index}", $id, PDO::PARAM_INT);
+            $statement->bindValue(":_itemId{$index}", $id, PDO::PARAM_INT);
         }
 
         $statement->execute();

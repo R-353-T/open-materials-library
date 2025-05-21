@@ -6,10 +6,13 @@ use oml\api\model\TypeModel;
 use oml\php\abstract\Repository;
 use oml\php\core\Database;
 use oml\php\core\SqlSelectOptions;
+use oml\php\dal\SelectById;
 use PDO;
 
 class TypeRepository extends Repository
 {
+    use SelectById;
+
     private readonly string $typeInputTable;
 
     public function __construct()
