@@ -20,4 +20,6 @@ class Type
     public const QUANTITY = 14;
     public const QUANTITY_VALUE = 15;
     public const DATASHEET = 16;
+
+    public const ARRAY = 101;
 }

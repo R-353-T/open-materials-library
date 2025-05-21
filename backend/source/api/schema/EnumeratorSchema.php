@@ -20,7 +20,7 @@ class EnumeratorSchema extends Service
             ],
             "items" => [
                 "required" => true,
-                "type" => "array",
+                "type" => Type::ARRAY,
                 "item" => [
                     "value" => [
                         "required" => true,
