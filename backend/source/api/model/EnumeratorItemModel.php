@@ -9,6 +9,6 @@ class EnumeratorItemModel
     public int $enumeratorId;
     public ?int $quantityItemId = null;
 
-    public string|null $text = null;
+    public ?string $text = null;
     public int|float|null $number = null;
 }

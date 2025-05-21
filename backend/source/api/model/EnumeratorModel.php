@@ -9,5 +9,9 @@ class EnumeratorModel
     public string $description;
     public int $typeId;
     public ?int $quantityId = null;
+
+    /**
+     * @var EnumeratorItemModel[]|ValueModel[]
+     */
     public array $items;
 }
