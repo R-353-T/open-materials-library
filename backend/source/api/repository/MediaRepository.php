@@ -34,18 +34,18 @@ class MediaRepository extends Repository
     public function insert(mixed $media): int|WP_Error
     {
         $statement = Database::$PDO->prepare(<<<SQL
-        INSERT INTO {$this->table}
-        (
-            `name`,
-            `description`,
-            `path`
-        )
-        VALUES 
-        (
-            :_name,
-            :_description,
-            :_path
-        )
+            INSERT INTO {$this->table}
+            (
+                `name`,
+                `description`,
+                `path`
+            )
+            VALUES 
+            (
+                :_name,
+                :_description,
+                :_path
+            )
         SQL);
 
         $statement->bindValue(":_name", $media->name, PDO::PARAM_STR);
@@ -53,13 +53,10 @@ class MediaRepository extends Repository
         $statement->bindValue(":_path", $media->path, PDO::PARAM_STR);
 
         try {
-            Database::$PDO->beginTransaction();
             $statement->execute();
             $media->id = Database::$PDO->lastInsertId();
-            Database::$PDO->commit();
             return $media->id;
         } catch (Throwable $error) {
-            Database::$PDO->rollBack();
             return new InternalError($error->getMessage(), $error->getTraceAsString());
         }
     }
@@ -70,12 +67,12 @@ class MediaRepository extends Repository
     public function update(mixed $media): int|WP_Error
     {
         $statement = Database::$PDO->prepare(<<<SQL
-        UPDATE {$this->table}
-        SET
-            `name` = :_name,
-            `description` = :_description,
-            `path` = :_path
-        WHERE `id` = :id
+            UPDATE {$this->table}
+            SET
+                `name` = :_name,
+                `description` = :_description,
+                `path` = :_path
+            WHERE `id` = :id
         SQL);
 
         $statement->bindValue(":_name", $media->name, PDO::PARAM_STR);
@@ -84,12 +81,9 @@ class MediaRepository extends Repository
         $statement->bindValue(":id", $media->id, PDO::PARAM_INT);
 
         try {
-            Database::$PDO->beginTransaction();
             $statement->execute();
-            Database::$PDO->commit();
             return $media->id;
         } catch (Throwable $error) {
-            Database::$PDO->rollBack();
             return new InternalError($error->getMessage(), $error->getTraceAsString());
         }
     }
