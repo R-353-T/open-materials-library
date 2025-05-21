@@ -64,6 +64,7 @@ class EnumeratorItemRepository extends Repository
         $statement = Database::$PDO->prepare(<<<SQL
             UPDATE {$this->table}
             SET
+                `enumeratorId` = :_enumeratorId,
                 `text` = :_text,
                 `number` = :_number,
                 `quantityItemId` = :_quantityItemId,
@@ -71,7 +72,7 @@ class EnumeratorItemRepository extends Repository
             WHERE `id` = :_id
         SQL);
 
-
+        $statement->bindValue(":_id", $enumerator_item->id, PDO::PARAM_INT);
         $statement->bindValue(":_enumeratorId", $enumerator_item->enumeratorId, PDO::PARAM_INT);
         $statement->bindValue(":_position", $enumerator_item->position, PDO::PARAM_INT);
         $statement->bindValue(":_text", ...Repository::nullable($enumerator_item->text, PDO::PARAM_STR));
@@ -121,7 +122,9 @@ class EnumeratorItemRepository extends Repository
 
         $statement = Database::$PDO->prepare(<<<SQL
         UPDATE {$this->table}
-        SET `value` = UUID()
+        SET 
+            `text` = null,
+            `number` = null
         WHERE `enumeratorId` = :_enumeratorId
         SQL);
 

@@ -58,7 +58,7 @@ function oml__name(mixed $value, object $repository, ?int $id = null): array
 
     $match = $repository->selectByName($value);
 
-    if ($repository !== null && $match !== false && $match->id !== $id) {
+    if ($match !== false && $match->id !== $id) {
         return [false, APIError::PARAMETER_NOT_FREE];
     }
 

@@ -60,8 +60,8 @@ class EnumeratorValidator extends Validator
             ->validate("oml__array");
         if ($this->hasError(["items", "typeId", "quantityId"]) === false) {
             $this->model->items = [];
-            foreach ($this->parameterValue as $quantity_position => $quantity_item) {
-                $this->itemValidator->item($quantity_position, $quantity_item, $this->model, $this->error_list);
+            foreach ($this->parameterValue as $enumerator_position => $enumerator_item) {
+                $this->itemValidator->item($enumerator_position, $enumerator_item, $this->model, $this->error_list);
             }
         }
 
@@ -104,11 +104,13 @@ class EnumeratorValidator extends Validator
             ->validate("oml__id", [$this->repository])
             ->assign();
 
-        $this
-            ->initialize("name", $request->get_param("name"))
-            ->validate("oml__required")
-            ->validate("oml__name", [$this->repository])
-            ->assign();
+        if ($this->hasError("id") === false) {
+            $this
+                ->initialize("name", $request->get_param("name"))
+                ->validate("oml__required")
+                ->validate("oml__name", [$this->repository, $this->model->id])
+                ->assign();
+        }
 
         $this
             ->initialize("description", $request->get_param("description"))
@@ -133,8 +135,8 @@ class EnumeratorValidator extends Validator
             ->validate("oml__array");
         if ($this->hasError(["id", "items", "typeId", "quantityId"]) === false) {
             $this->model->items = [];
-            foreach ($this->parameterValue as $quantity_position => $quantity_item) {
-                $this->itemValidator->item($quantity_position, $quantity_item, $this->model, $this->error_list);
+            foreach ($this->parameterValue as $enumerator_position => $enumerator_item) {
+                $this->itemValidator->item($enumerator_position, $enumerator_item, $this->model, $this->error_list);
             }
         }
 

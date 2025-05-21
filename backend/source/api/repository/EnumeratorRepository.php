@@ -106,7 +106,7 @@ class EnumeratorRepository extends Repository
             $id_list = [];
 
             foreach ($enumerator->items as $item) {
-                $item->quantityId = $enumerator->id;
+                $item->enumeratorId = $enumerator->id;
 
                 if ($item->id !== null) {
                     $this->itemRepository->update($item);

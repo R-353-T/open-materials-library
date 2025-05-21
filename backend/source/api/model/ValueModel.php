@@ -8,6 +8,7 @@ class ValueModel
 {
     public ?int $id = null;
     public mixed $value;
+    public ?int $quantityItemId = null;
 
     public static function fromQuantityItem(QuantityItemModel $item): ValueModel
     {
@@ -22,6 +23,7 @@ class ValueModel
         $value = new ValueModel();
         $value->id = $item->id;
         $value->value = $item->text ?? $item->number;
+        $value->quantityItemId = $item->quantityItemId;
         return $value;
     }
 }
