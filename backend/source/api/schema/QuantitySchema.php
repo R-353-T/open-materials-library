@@ -31,7 +31,7 @@ class QuantitySchema extends Service
         ];
     }
 
-    public function get()
+    public function delete()
     {
         return [
             "id"    => [
@@ -41,7 +41,7 @@ class QuantitySchema extends Service
         ];
     }
 
-    public function delete()
+    public function get()
     {
         return [
             "id"    => [
@@ -58,7 +58,7 @@ class QuantitySchema extends Service
                 "required" => false,
                 "type" => Type::LABEL
             ],
-            "indexPage" => [
+            "pageIndex" => [
                 "required" => false,
                 "type" => Type::NUMBER
             ],

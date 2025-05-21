@@ -25,7 +25,7 @@ class MediaSchema extends Service
         ];
     }
 
-    public function get()
+    public function delete()
     {
         return [
             "id"    => [
@@ -35,7 +35,7 @@ class MediaSchema extends Service
         ];
     }
 
-    public function delete()
+    public function get()
     {
         return [
             "id"    => [
@@ -52,7 +52,7 @@ class MediaSchema extends Service
                 "required" => false,
                 "type" => Type::LABEL
             ],
-            "indexPage" => [
+            "pageIndex" => [
                 "required" => false,
                 "type" => Type::NUMBER
             ],

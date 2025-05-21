@@ -2,67 +2,35 @@
 
 namespace oml\api\schema;
 
-use oml\api\validator\EnumeratorValidator;
+use oml\api\enum\Type;
 use oml\php\abstract\Service;
 
 class EnumeratorSchema extends Service
 {
-    private readonly EnumeratorValidator $validator;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->validator = EnumeratorValidator::inject();
-    }
-
     public function create()
     {
         return [
             "name" => [
                 "required" => true,
-                "type" => "string",
-                "validate_callback" => [$this->validator, "validateName"]
+                "type" => Type::LABEL
             ],
             "description" => [
                 "required" => true,
-                "type" => "string",
-                "maxLength" => OML_API_MAX_DESCRIPTION_LENGTH
-            ],
-            "typeId" => [
-                "required" => true,
-                "type" => "integer"
+                "type" => Type::TEXT
             ],
             "items" => [
                 "required" => true,
                 "type" => "array",
-                "validate_callback" => [$this->validator, "validateItems"],
-                "items" => [
-                    "type" => "object",
-                    "additionalProperties" => false,
-                    "properties" => [
-                        "value" => [
-                            "required" => true,
-                            "type" => "string"
-                        ],
-                        "quantityItemId" => [
-                            "type" => [
-                                "null",
-                                "integer"
-                            ]
-                        ]
+                "item" => [
+                    "value" => [
+                        "required" => true,
+                        "type" => Type::LABEL
+                    ],
+                    "quantityItemId" => [
+                        "required" => false,
+                        "type" => Type::NUMBER
                     ]
                 ]
-            ]
-        ];
-    }
-
-    public function get()
-    {
-        return [
-            "id"    => [
-                "required" => true,
-                "type" => "integer",
-                "validate_callback" => [$this->validator, "validateId"],
             ]
         ];
     }
@@ -72,8 +40,17 @@ class EnumeratorSchema extends Service
         return [
             "id"    => [
                 "required" => true,
-                "type" => "integer",
-                "validate_callback" => [$this->validator, "validateId"],
+                "type" => Type::NUMBER
+            ]
+        ];
+    }
+
+    public function get()
+    {
+        return [
+            "id"    => [
+                "required" => true,
+                "type" => Type::NUMBER
             ]
         ];
     }
@@ -82,19 +59,16 @@ class EnumeratorSchema extends Service
     {
         return [
             "search" => [
-                "type" => "string",
-                "maxLength" => OML_API_MAX_LABEL_LENGTH,
+                "required" => false,
+                "type" => Type::LABEL
             ],
-            "indexPage" => [
-                "type" => "integer",
-                "minimum" => 1,
-                "default" => 1
+            "pageIndex" => [
+                "required" => false,
+                "type" => Type::NUMBER
             ],
             "pageSize" => [
-                "type" => "integer",
-                "maximum" => OML_API_MAX_PAGE_SIZE,
-                "minimum" => OML_API_MIN_PAGE_SIZE,
-                "default" => OML_API_DEFAULT_PAGE_SIZE
+                "required" => false,
+                "type" => Type::NUMBER
             ]
         ];
     }
