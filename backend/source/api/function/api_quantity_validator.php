@@ -11,7 +11,6 @@ function oml__quantity_item_id(mixed $id, int $quantity_id): array
     }
 
     $quantity_item_repository = QuantityItemRepository::inject();
-
     $id = oml__id($id, $quantity_item_repository);
 
     if ($id[0] === false) {

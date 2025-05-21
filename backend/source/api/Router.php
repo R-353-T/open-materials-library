@@ -152,7 +152,7 @@ class Router extends Service
             $routeSchema = $routeOptions["schema"];
 
             foreach ($routeEndpoints as $endpoint) {
-                $endpointUrl = isset($endpoint["endpoint"]) ? $endpoint["endpoint"] : "";
+                $endpointUrl = $endpoint["endpoint"] ?? "";
 
                 register_rest_route(
                     ___NAMESPACE___,

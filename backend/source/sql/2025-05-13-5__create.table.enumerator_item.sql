@@ -9,6 +9,7 @@ create table oml__enumerator_item (
 
     constraint `oml_enumerator_item__enumeratorId` foreign key (`enumeratorId`) references `oml__enumerator` (`id`) on delete cascade,
     constraint `oml_enumerator_item__quantityItemId` foreign key (`quantityItemId`) references `oml__quantity_item` (`id`) on delete cascade,
-    constraint `oml_enumerator_item__value` unique (`enumeratorId`, `text`, `number`),
+    constraint `oml_enumerator_item__text` unique (`enumeratorId`, `text`),
+    constraint `oml_enumerator_item__number` unique (`enumeratorId`, `number`),
     constraint `oml_enumerator_item__position` unique (`enumeratorId`, `position`)
 );

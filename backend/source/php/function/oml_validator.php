@@ -198,22 +198,3 @@ function oml__array(mixed $value): array
 
     return [true, $value];
 }
-
-function oml__label(mixed $value, bool $not_empty = true): array
-{
-    if (is_string($value) === false) {
-        return [false, APIError::PARAMETER_INVALID];
-    }
-
-    $value = trim($value);
-
-    if (mb_strlen($value) > ___MAX_LABEL_LENGTH___) {
-        return [false, APIError::PARAMATER_STRING_TOO_LONG];
-    }
-
-    if (mb_strlen($value) === 0 && $not_empty) {
-        return [false, APIError::PARAMETER_STRING_EMPTY];
-    }
-
-    return [true, $value];
-}

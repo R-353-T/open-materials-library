@@ -13,7 +13,7 @@ class Database
 
     public static function initializeDatabase()
     {
-        if (!isset(Database::$PDO)) {
+        if (isset(Database::$PDO) === false) {
             Database::$PDO = new PDO(___CONNECTION_STRING___, DB_USER, DB_PASSWORD);
             Database::$PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }

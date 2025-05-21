@@ -35,15 +35,21 @@ abstract class Validator extends Service
         $this->error_list[] = $error;
     }
 
-    protected function hasError(?string $parameter_name = null): bool
+    protected function hasError(null|string|array $parameter_name = null): bool
     {
         if ($parameter_name === null) {
             return count($this->error_list) > 0;
         }
 
         foreach ($this->error_list as $error) {
-            if ($error["parameter"] === $parameter_name) {
-                return true;
+            if (is_array($parameter_name) === false) {
+                if ($error["parameter"] === $parameter_name) {
+                    return true;
+                }
+            } else {
+                if (in_array($error["parameter"], $parameter_name)) {
+                    return true;
+                }
             }
         }
 
