@@ -2,32 +2,30 @@
 
 namespace oml\api\repository;
 
-use oml\api\model\DatasheetCategoryModel;
+use oml\api\model\CategoryModel;
 use oml\php\abstract\Repository;
 use oml\php\core\Database;
 use oml\php\dal\DeleteById;
 use oml\php\dal\SelectAll;
 use oml\php\dal\SelectById;
-use oml\php\dal\SelectByName;
 use oml\php\error\InternalError;
 use PDO;
 use Throwable;
 use WP_Error;
 
-class DatasheetCategoryRepository extends Repository
+class CategoryRepository extends Repository
 {
     use SelectById;
     use SelectAll;
-    use SelectByName;
     use DeleteById;
 
     public function __construct()
     {
-        parent::__construct(___DB_DATASHEET_CATEGORY___, DatasheetCategoryModel::class);
+        parent::__construct(___DB_CATEGORY___, CategoryModel::class);
     }
 
     /**
-     * @param DatasheetCategoryModel $category
+     * @param CategoryModel $category
      */
     public function insert(mixed $category): int|WP_Error
     {
@@ -63,7 +61,7 @@ class DatasheetCategoryRepository extends Repository
     }
 
     /**
-     * @param DatasheetCategoryModel $category
+     * @param CategoryModel $category
      */
     public function update(mixed $category): int|WP_Error
     {
@@ -90,5 +88,55 @@ class DatasheetCategoryRepository extends Repository
         } catch (Throwable $error) {
             return new InternalError($error->getMessage(), $error->getTraceAsString());
         }
+    }
+
+    public function selectByNameAndParentId(string $name, int $parent_id): CategoryModel | false
+    {
+        $statement = Database::$PDO->prepare(<<<SQL
+            SELECT * FROM {$this->table}
+            WHERE `name` = :_name AND `parentId` = :_parentId
+        SQL);
+
+        $statement->bindValue(":_name", $name, PDO::PARAM_STR);
+        $statement->bindValue(":_parentId", $parent_id, PDO::PARAM_INT);
+        $statement->execute();
+        $statement->setFetchMode(PDO::FETCH_CLASS, $this->model);
+        return $statement->fetch();
+    }
+
+    public function countByParentId(int $parent_id): int
+    {
+        $statement = Database::$PDO->prepare(<<<SQL
+            SELECT COUNT(*) FROM {$this->table}
+            WHERE `parentId` = :_parentId
+        SQL);
+
+        $statement->bindValue(":_parentId", $parent_id, PDO::PARAM_INT);
+        $statement->execute();
+        return $statement->fetchColumn();
+    }
+
+    public function isChildOf(int $needle, int $parent_id, bool $recursive = false): bool
+    {
+        $statement = Database::$PDO->prepare(<<<SQL
+            SELECT `id` FROM {$this->table}
+            WHERE `parentId` = :_parentId
+        SQL);
+
+        $statement->bindValue(":_parentId", $parent_id, PDO::PARAM_INT);
+        $statement->execute();
+        $id_list = $statement->fetchAll(PDO::FETCH_COLUMN);
+
+        foreach ($id_list as $child_id) {
+            if ($child_id === $needle) {
+                return true;
+            }
+
+            if ($recursive) {
+                return $this->isChildOf($needle, $child_id, $recursive);
+            }
+        }
+
+        return false;
     }
 }

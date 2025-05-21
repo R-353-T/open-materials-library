@@ -2,39 +2,39 @@
 
 namespace oml\api\controller;
 
-use oml\api\model\DatasheetCategoryModel;
-use oml\api\repository\DatasheetCategoryRepository;
+use oml\api\model\CategoryModel;
+use oml\api\repository\CategoryRepository;
 use oml\php\abstract\Controller;
 use oml\php\core\SqlSelectOptions;
 
-class DatasheetCategoryController extends Controller
+class CategoryController extends Controller
 {
-    private readonly DatasheetCategoryRepository $repository;
+    private readonly CategoryRepository $repository;
 
     public function __construct()
     {
         parent::__construct();
-        $this->repository = DatasheetCategoryRepository::inject();
+        $this->repository = CategoryRepository::inject();
     }
 
-    public function create(DatasheetCategoryModel $category)
+    public function create(CategoryModel $category)
     {
         return ($error = $this->repository->insert($category)) && is_wp_error($error)
             ? $error
             : $this->OK($category);
     }
 
-    public function delete(DatasheetCategoryModel $category)
+    public function delete(CategoryModel $category)
     {
         return $this->OK($this->repository->deleteById($category->id));
     }
 
-    public function get(DatasheetCategoryModel $category)
+    public function get(CategoryModel $category)
     {
         return $this->OK($this->repository->selectById($category->id));
     }
 
-    public function update(DatasheetCategoryModel $category)
+    public function update(CategoryModel $category)
     {
         return ($error = $this->repository->update($category)) && is_wp_error($error)
             ? $error

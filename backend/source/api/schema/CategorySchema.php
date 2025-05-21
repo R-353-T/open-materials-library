@@ -5,7 +5,7 @@ namespace oml\api\schema;
 use oml\api\enum\Type;
 use oml\php\abstract\Service;
 
-class DatasheetCategorySchema extends Service
+class CategorySchema extends Service
 {
     public function create()
     {

@@ -2,7 +2,7 @@
 
 namespace oml\api\model;
 
-class DatasheetCategoryModel
+class CategoryModel
 {
     public ?int $id = null;
     public int $position;
