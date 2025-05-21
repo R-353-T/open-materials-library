@@ -26,17 +26,14 @@ class QuantityItemValidator extends Validator
             ->assign();
 
         if ($quantity->id !== null) {
-            $id = isset($item["id"]) ? $item["id"] : null;
-
             $this
-                ->initialize("items", $id, "id", $position)
+                ->initialize("items", ($item["id"] ?? null), "id", $position)
                 ->validate("oml__quantity_item_id", [$quantity->id])
                 ->assign();
         }
 
-        $value = isset($item["value"]) ? $item["value"] : null;
         $this
-            ->initialize("items", $value, "value", $position)
+            ->initialize("items", ($item["value"] ?? null), "value", $position)
             ->validate("oml__required")
             ->validate("oml__label")
             ->validate("oml__quantity_item_value", [$quantity])

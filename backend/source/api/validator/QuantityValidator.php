@@ -107,7 +107,7 @@ class QuantityValidator extends Validator
             ->initialize("items", $request->get_param("items"))
             ->validate("oml__required")
             ->validate("oml__array");
-        if ($this->hasError("items") === false && $this->hasError("id") === false) {
+        if ($this->hasError(["id", "items"]) === false) {
             $this->model->items = [];
             foreach ($this->parameterValue as $quantity_position => $quantity_item) {
                 $this->itemValidator->item($quantity_position, $quantity_item, $this->model, $this->error_list);

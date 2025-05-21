@@ -116,9 +116,9 @@ class QuantityItemRepository extends Repository
     {
         $parameter_count = count($id_list);
         $query = <<<SQL
-        DELETE FROM {$this->table}
-        WHERE `quantityId` = :_quantityId 
-        AND `id` NOT IN (
+            DELETE FROM {$this->table}
+            WHERE `quantityId` = :_quantityId 
+            AND `id` NOT IN (
         SQL;
 
         for ($i = 0; $i < $parameter_count; $i++) {

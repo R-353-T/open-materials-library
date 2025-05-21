@@ -40,9 +40,8 @@ class MediaValidator extends Validator
             ->validate("oml__description")
             ->assign();
 
-        $file = isset($request->get_file_params()["file"]) ? $request->get_file_params()["file"] : null;
         $this
-            ->initialize("file", $file)
+            ->initialize("file", ($request->get_file_params()["file"] ?? null))
             ->validate("oml__required")
             ->validate("oml__image");
 
@@ -104,10 +103,8 @@ class MediaValidator extends Validator
             ->validate("oml__description")
             ->assign();
 
-
-        $file = isset($request->get_file_params()["file"]) ? $request->get_file_params()["file"] : null;
         $this
-            ->initialize("file", $file)
+            ->initialize("file", ($request->get_file_params()["file"] ?? null))
             ->validate("oml__image");
 
         if ($this->hasError("file") === false) {

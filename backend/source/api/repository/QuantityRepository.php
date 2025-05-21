@@ -73,7 +73,7 @@ class QuantityRepository extends Repository
 
     /**
      * @param QuantityModel $quantity
-     * TODO - Optimizable with bulk insert/update
+     * TODO - Optimizable with bulk insert / update
      */
     public function update(mixed $quantity): int|WP_Error
     {
@@ -108,7 +108,6 @@ class QuantityRepository extends Repository
             }
 
             $this->itemRepository->deleteNotInIdList($quantity->id, $id_list);
-
             Database::$PDO->commit();
             return $quantity->id;
         } catch (Throwable $error) {
