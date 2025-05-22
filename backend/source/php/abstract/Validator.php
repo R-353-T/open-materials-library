@@ -85,7 +85,7 @@ abstract class Validator extends Service
         return $this;
     }
 
-    public function assign(?object $to = null)
+    public function assign(?object $to = null): void
     {
         if ($this->hasError($this->paramaterName) === false) {
             $property_name = $this->propertyName ?? $this->paramaterName;
@@ -99,5 +99,38 @@ abstract class Validator extends Service
 
         $this->paramaterName = "";
         $this->parameterValue = null;
+    }
+
+    public function validateId(
+        string $parameter_name,
+        mixed $parameter_value,
+        object $repository
+    ): void {
+        $this->initialize($parameter_name, $parameter_value)
+            ->validate("validator__is_required")
+            ->validate("validator__database__index", [$repository])
+            ->assign();
+    }
+
+    public function validateName(
+        string $parameter_name,
+        mixed $parameter_value,
+        object $repository,
+        ?int $id = null
+    ): void {
+        $this->initialize($parameter_name, $parameter_value)
+            ->validate("validator__is_required")
+            ->validate("validator__dabatase__name", [$repository, $id])
+            ->assign();
+    }
+
+    public function validateDescription(
+        string $parameter_name,
+        mixed $parameter_value
+    ): void {
+        $this->initialize($parameter_name, $parameter_value)
+            ->validate("validator__is_required")
+            ->validate("validator__database__description")
+            ->assign();
     }
 }

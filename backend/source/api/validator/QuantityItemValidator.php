@@ -19,24 +19,20 @@ class QuantityItemValidator extends Validator
         $this->model->position = $position;
         $this->error_list = [];
 
-        $this
-            ->initialize("items", $item, null, $position)
-            ->validate("oml__required")
-            ->validate("oml__array")
+        $this->initialize("items", $item, null, $position)
+            ->validate("validator__is_required")
+            ->validate("validator__is_array")
             ->assign();
 
         if ($quantity->id !== null) {
-            $this
-                ->initialize("items", ($item["id"] ?? null), "id", $position)
-                ->validate("oml__quantity_item_id", [$quantity->id])
+            $this->initialize("items", ($item["id"] ?? null), "id", $position)
+                ->validate("validator__quantity__item_id", [$quantity->id])
                 ->assign();
         }
 
-        $this
-            ->initialize("items", ($item["value"] ?? null), "value", $position)
-            ->validate("oml__required")
-            ->validate("oml__label")
-            ->validate("oml__quantity_item_value", [$quantity])
+        $this->initialize("items", ($item["value"] ?? null), "value", $position)
+            ->validate("validator__is_required")
+            ->validate("validator__quantity__item_value", [$quantity])
             ->assign();
 
         if ($this->hasError()) {

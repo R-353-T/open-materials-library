@@ -4,6 +4,13 @@ namespace oml\api\enum;
 
 class Type
 {
+    public const ENUMERABLE_LIST = [
+        self::LABEL,
+        self::NUMBER,
+        self::MONEY,
+        self::DURATION
+    ];
+
     public const TYPE = 1;
     public const LABEL = 2;
     public const TEXT = 3;

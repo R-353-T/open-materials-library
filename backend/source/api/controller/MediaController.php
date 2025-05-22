@@ -24,12 +24,9 @@ class MediaController extends Controller
 
     public function create(MediaModel $media)
     {
-        if (($error = $this->repository->insert($media)) && is_wp_error($error)) {
-            $this->service->delete($media->path);
-            return $error;
-        }
-
-        return $this->OK($media);
+        return ($error = $this->repository->insert($media)) && is_wp_error($error)
+            ? $error
+            : $this->OK($media);
     }
 
     public function delete(MediaModel $media)
@@ -44,15 +41,9 @@ class MediaController extends Controller
 
     public function update(MediaModel $media)
     {
-        if (($error = $this->repository->update($media)) && is_wp_error($error)) {
-            if ($this->repository->selectById($media->id)->path !== $media->path) {
-                $this->service->delete($media->path);
-            }
-
-            return $error;
-        } else {
-            return $this->OK($media);
-        }
+        return ($error = $this->repository->update($media)) && is_wp_error($error)
+            ? $error
+            : $this->OK($media);
     }
 
     public function list(SqlSelectOptions $options)

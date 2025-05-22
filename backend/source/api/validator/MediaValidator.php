@@ -28,40 +28,35 @@ class MediaValidator extends Validator
 
     public function create(WP_REST_Request $request)
     {
-        $this
-            ->initialize("name", $request->get_param("name"))
-            ->validate("oml__required")
-            ->validate("oml__name", [$this->repository])
-            ->assign();
+        $this->validateName("name", $request->get_param("name"), $this->repository);
+        $this->validateDescription("description", $request->get_param("description"));
 
-        $this
-            ->initialize("description", $request->get_param("description"))
-            ->validate("oml__required")
-            ->validate("oml__description")
-            ->assign();
+        if (1) {
+            $this->initialize("file", ($request->get_file_params()["file"] ?? null))
+                ->validate("validator__is_required")
+                ->validate("validator__file__image");
 
-        $this
-            ->initialize("file", ($request->get_file_params()["file"] ?? null))
-            ->validate("oml__required")
-            ->validate("oml__image");
-
-        if ($this->hasError("file") === false) {
-            $this->model->path = $this->service->upload($this->parameterValue);
+            if ($this->hasError("file") === false) {
+                $this->model->path = $this->service->upload($this->parameterValue);
+            }
         }
 
-        return $this->hasError()
-            ? new BadRequestError($this->error_list)
-            : $this->controller->create($this->model);
+        if ($this->hasError()) {
+            $response = new BadRequestError($this->error_list);
+        } else {
+            $response = $this->controller->create($this->model);
+
+            if (is_wp_error($response)) {
+                $this->service->delete($this->model->path);
+            }
+        }
+
+        return $response;
     }
 
     public function delete(WP_REST_Request $request)
     {
-        $this
-            ->initialize("id", $request->get_param("id"))
-            ->validate("oml__required")
-            ->validate("oml__id", [$this->repository])
-            ->assign();
-
+        $this->validateId("id", $request->get_param("id"), $this->repository);
         return $this->hasError()
             ? new BadRequestError($this->error_list)
             : $this->controller->delete($this->model);
@@ -69,12 +64,7 @@ class MediaValidator extends Validator
 
     public function get(WP_REST_Request $request)
     {
-        $this
-            ->initialize("id", $request->get_param("id"))
-            ->validate("oml__required")
-            ->validate("oml__id", [$this->repository])
-            ->assign();
-
+        $this->validateId("id", $request->get_param("id"), $this->repository);
         return $this->hasError()
             ? new BadRequestError($this->error_list)
             : $this->controller->get($this->model);
@@ -82,62 +72,58 @@ class MediaValidator extends Validator
 
     public function update(WP_REST_Request $request)
     {
-        $this
-            ->initialize("id", $request->get_param("id"))
-            ->validate("oml__required")
-            ->validate("oml__id", [$this->repository])
-            ->assign();
-
+        $this->validateId("id", $request->get_param("id"), $this->repository);
 
         if ($this->hasError("id") === false) {
-            $this
-                ->initialize("name", $request->get_param("name"))
-                ->validate("oml__required")
-                ->validate("oml__name", [$this->repository, $this->model->id])
-                ->assign();
+            $this->validateName("name", $request->get_param("name"), $this->repository, $this->model->id);
         }
 
-        $this
-            ->initialize("description", $request->get_param("description"))
-            ->validate("oml__required")
-            ->validate("oml__description")
-            ->assign();
+        $this->validateDescription("description", $request->get_param("description"));
 
-        $this
-            ->initialize("file", ($request->get_file_params()["file"] ?? null))
-            ->validate("oml__image");
+        if (1) {
+            $this->initialize("file", ($request->get_file_params()["file"] ?? null))
+                ->validate("validator__file__image");
 
-        if ($this->hasError("file") === false) {
-            if ($this->parameterValue !== null) {
-                $this->model->path = $this->service->upload($this->parameterValue);
-            } else {
-                $this->model->path = $this->repository->selectById($this->model->id)->path;
+            if ($this->hasError("file") === false) {
+                if ($this->parameterValue !== null) {
+                    $this->model->path = $this->service->upload($this->parameterValue);
+                } else {
+                    $this->model->path = $this->repository->selectById($this->model->id)->path;
+                }
             }
         }
 
-        return $this->hasError()
-            ? new BadRequestError($this->error_list)
-            : $this->controller->update($this->model);
+        if ($this->hasError()) {
+            $response = new BadRequestError($this->error_list);
+        } else {
+            $response = $this->controller->update($this->model);
+
+            if (
+                is_wp_error($response)
+                && $this->repository->selectById($this->model->id)->path !== $this->model->path
+            ) {
+                $this->service->delete($this->model->path);
+            }
+        }
+
+        return $response;
     }
 
     public function list(WP_REST_Request $request)
     {
         $options = new SqlSelectOptions();
 
-        $this
-            ->initialize("pageIndex", $request->get_param("pageIndex"))
-            ->validate("oml__required")
-            ->validate("oml__pagination_index")
+        $this->initialize("pageIndex", $request->get_param("pageIndex"))
+            ->validate("validator__is_required")
+            ->validate("validator__pagination__index")
             ->assign($options);
 
-        $this
-            ->initialize("pageSize", $request->get_param("pageSize"))
-            ->validate("oml__pagination_size")
+        $this->initialize("pageSize", $request->get_param("pageSize"))
+            ->validate("validator__pagination__size")
             ->assign($options);
 
-        $this
-            ->initialize("search", $request->get_param("search"))
-            ->validate("oml__search");
+        $this->initialize("search", $request->get_param("search"))
+            ->validate("validator__type__label");
 
         if ($this->hasError("search") === false && $this->parameterValue !== null) {
             $options->where(

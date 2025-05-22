@@ -27,28 +27,9 @@ class QuantityValidator extends Validator
 
     public function create(WP_REST_Request $request)
     {
-        $this
-            ->initialize("name", $request->get_param("name"))
-            ->validate("oml__required")
-            ->validate("oml__name", [$this->repository])
-            ->assign();
-
-        $this
-            ->initialize("description", $request->get_param("description"))
-            ->validate("oml__required")
-            ->validate("oml__description")
-            ->assign();
-
-        $this
-            ->initialize("items", $request->get_param("items"))
-            ->validate("oml__required")
-            ->validate("oml__array");
-        if ($this->hasError("items") === false) {
-            $this->model->items = [];
-            foreach ($this->parameterValue as $quantity_position => $quantity_item) {
-                $this->itemValidator->item($quantity_position, $quantity_item, $this->model, $this->error_list);
-            }
-        }
+        $this->validateName("name", $request->get_param("name"), $this->repository);
+        $this->validateDescription("description", $request->get_param("description"));
+        $this->validateItems("items", $request->get_param("items"));
 
         return $this->hasError()
             ? new BadRequestError($this->error_list)
@@ -57,12 +38,7 @@ class QuantityValidator extends Validator
 
     public function delete(WP_REST_Request $request)
     {
-        $this
-            ->initialize("id", $request->get_param("id"))
-            ->validate("oml__required")
-            ->validate("oml__id", [$this->repository])
-            ->assign();
-
+        $this->validateId("id", $request->get_param("id"), $this->repository);
         return $this->hasError()
             ? new BadRequestError($this->error_list)
             : $this->controller->delete($this->model);
@@ -70,12 +46,7 @@ class QuantityValidator extends Validator
 
     public function get(WP_REST_Request $request)
     {
-        $this
-            ->initialize("id", $request->get_param("id"))
-            ->validate("oml__required")
-            ->validate("oml__id", [$this->repository])
-            ->assign();
-
+        $this->validateId("id", $request->get_param("id"), $this->repository);
         return $this->hasError()
             ? new BadRequestError($this->error_list)
             : $this->controller->get($this->model);
@@ -83,35 +54,12 @@ class QuantityValidator extends Validator
 
     public function update(WP_REST_Request $request)
     {
-        $this
-            ->initialize("id", $request->get_param("id"))
-            ->validate("oml__required")
-            ->validate("oml__id", [$this->repository])
-            ->assign();
+        $this->validateId("id", $request->get_param("id"), $this->repository);
+        $this->validateDescription("description", $request->get_param("description"));
+        $this->validateItems("items", $request->get_param("items"));
 
         if ($this->hasError("id") === false) {
-            $this
-                ->initialize("name", $request->get_param("name"))
-                ->validate("oml__required")
-                ->validate("oml__name", [$this->repository, $this->model->id])
-                ->assign();
-        }
-
-        $this
-            ->initialize("description", $request->get_param("description"))
-            ->validate("oml__required")
-            ->validate("oml__description")
-            ->assign();
-
-        $this
-            ->initialize("items", $request->get_param("items"))
-            ->validate("oml__required")
-            ->validate("oml__array");
-        if ($this->hasError(["id", "items"]) === false) {
-            $this->model->items = [];
-            foreach ($this->parameterValue as $quantity_position => $quantity_item) {
-                $this->itemValidator->item($quantity_position, $quantity_item, $this->model, $this->error_list);
-            }
+            $this->validateName("name", $request->get_param("name"), $this->repository, $this->model->id);
         }
 
         return $this->hasError()
@@ -119,24 +67,22 @@ class QuantityValidator extends Validator
             : $this->controller->update($this->model);
     }
 
+
     public function list(WP_REST_Request $request)
     {
         $options = new SqlSelectOptions();
 
-        $this
-            ->initialize("pageIndex", $request->get_param("pageIndex"))
-            ->validate("oml__required")
-            ->validate("oml__pagination_index")
+        $this->initialize("pageIndex", $request->get_param("pageIndex"))
+            ->validate("validator__is_required")
+            ->validate("validator__pagination__index")
             ->assign($options);
 
-        $this
-            ->initialize("pageSize", $request->get_param("pageSize"))
-            ->validate("oml__pagination_size")
+        $this->initialize("pageSize", $request->get_param("pageSize"))
+            ->validate("validator__pagination__size")
             ->assign($options);
 
-        $this
-            ->initialize("search", $request->get_param("search"))
-            ->validate("oml__search");
+        $this->initialize("search", $request->get_param("search"))
+            ->validate("validator__type__label");
 
         if ($this->hasError("search") === false && $this->parameterValue !== null) {
             $options->where(
@@ -153,5 +99,19 @@ class QuantityValidator extends Validator
         return $this->hasError()
             ? new BadRequestError($this->error_list)
             : $this->controller->list($options);
+    }
+
+    private function validateItems(string $parameter_name, mixed $parameter_value): void
+    {
+        $this->initialize($parameter_name, $parameter_value)
+            ->validate("validator__is_required")
+            ->validate("validator__is_array");
+
+        if ($this->hasError(["id", "items"]) === false) {
+            $this->model->items = [];
+            foreach ($this->parameterValue as $quantity_position => $quantity_item) {
+                $this->itemValidator->item($quantity_position, $quantity_item, $this->model, $this->error_list);
+            }
+        }
     }
 }

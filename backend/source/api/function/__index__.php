@@ -1,6 +1,11 @@
 <?php
 
-require_once __DIR__ . "/api_type_validator.php";
-require_once __DIR__ . "/api_quantity_validator.php";
-require_once __DIR__ . "/api_enumerator_validator.php";
-require_once __DIR__ . "/api_datasheet_category_validator.php";
+require_once __DIR__ . "/validator/validator.php";
+require_once __DIR__ . "/validator/type.validator.php";
+require_once __DIR__ . "/validator/database.validator.php";
+require_once __DIR__ . "/validator/pagination.validator.php";
+require_once __DIR__ . "/validator/file.validator.php";
+
+require_once __DIR__ . "/validator/quantity.validator.php";
+require_once __DIR__ . "/validator/enumerator.validator.php";
+require_once __DIR__ . "/validator/category.validator.php";
