@@ -8,7 +8,7 @@ create table oml__category (
     `description` varchar(8192) not null,
     `parentId` int(11) unsigned,
 
-    constraint `oml__category__parentId` foreign key (`parentId`) references `oml__datasheet_category` (`id`),
+    constraint `oml__category__parentId` foreign key (`parentId`) references `oml__category` (`id`),
     constraint `oml__category__name` unique (`parentId`, `name`),
     constraint `oml__category__position` unique (`parentId`, `position`)
 );
