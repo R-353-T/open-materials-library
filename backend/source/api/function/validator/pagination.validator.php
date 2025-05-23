@@ -41,6 +41,8 @@ function validator__pagination__size(mixed $value): array
         if ($output[0]) {
             $output[1] = (int) $value;
         }
+    } else {
+        $output[1] = ___DEFAULT_PAGE_SIZE___;
     }
 
     return $output;

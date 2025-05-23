@@ -4,8 +4,11 @@ namespace oml\api\model;
 
 class TypeModel
 {
-    public ?int $id = null;
-    public string $name;
     public string $column;
+
+    public ?int $id = null;
+
     public string $input;
+
+    public string $name;
 }

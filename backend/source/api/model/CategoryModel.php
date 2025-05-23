@@ -2,11 +2,15 @@
 
 namespace oml\api\model;
 
-class CategoryModel
+use oml\php\abstract\Model;
+
+class CategoryModel extends Model
 {
-    public ?int $id = null;
-    public int $position;
-    public string $name;
     public string $description;
+
+    public string $name;
+
     public ?int $parentId = null;
+
+    public int $position;
 }

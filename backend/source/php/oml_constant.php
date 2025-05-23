@@ -112,7 +112,7 @@ defined("___MIN_NUMBER___") or define("___MIN_NUMBER___", -2147483648); // PHP_M
 
 # Pagination
 
-defined("___PAGE_SIZE___") or define("___PAGE_SIZE___", 32);
+defined("___DEFAULT_PAGE_SIZE___") or define("___DEFAULT_PAGE_SIZE___", 32);
 
 defined("___MIN_PAGE_SIZE___") or define("___MIN_PAGE_SIZE___", 4);
 

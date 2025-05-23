@@ -2,10 +2,13 @@
 
 namespace oml\api\model;
 
-class MediaModel
+use oml\php\abstract\Model;
+
+class MediaModel extends Model
 {
-    public ?int $id = null;
-    public string $name;
     public string $description;
+
+    public string $name;
+
     public string $path;
 }

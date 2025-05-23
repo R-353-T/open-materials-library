@@ -7,8 +7,10 @@ use oml\api\model\QuantityItemModel;
 class ValueModel
 {
     public ?int $id = null;
-    public mixed $value;
+
     public ?int $quantityItemId = null;
+
+    public mixed $value;
 
     public static function fromQuantityItem(QuantityItemModel $item): ValueModel
     {

@@ -2,14 +2,14 @@
 
 namespace oml\api\model;
 
-class QuantityModel
+use oml\php\abstract\Model;
+
+class QuantityModel extends Model
 {
-    public ?int $id = null;
-    public string $name;
     public string $description;
 
-    /**
-     * @var QuantityItemModel[]|ValueModel[]
-     */
+    /** @var QuantityItemModel[]|ValueModel[] */
     public array $items;
+
+    public string $name;
 }

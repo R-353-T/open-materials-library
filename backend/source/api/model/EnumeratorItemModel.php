@@ -2,13 +2,17 @@
 
 namespace oml\api\model;
 
-class EnumeratorItemModel
+use oml\php\abstract\Model;
+
+class EnumeratorItemModel extends Model
 {
-    public ?int $id = null;
-    public int $position;
     public int $enumeratorId;
+
+    public int $position;
+
+    public int|float|null $number = null;
+
     public ?int $quantityItemId = null;
 
     public ?string $text = null;
-    public int|float|null $number = null;
 }
